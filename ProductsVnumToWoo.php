@@ -16,17 +16,15 @@ $woocommerce = new Client(
     $cs_API_woo,
     [
         'version' => 'wc/v3',
-        'query_string_auth' => true,        
+        'query_string_auth' => true,
         'verify_ssl' => false
     ]
 );
 // ================================
 // Conexión API VNVM pedazo de loro origen!!!!!! Esto tenemos que postear 
 // ===================
-$mail = "jose@artipas.es";
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|623|623";
 
-
+$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|358|358";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -36,56 +34,97 @@ curl_setopt($ch, CURLOPT_HEADER, 0);
 echo "➜ Obteniendo datos origen Vnvm ... \n";
 $items_origin = curl_exec($ch);
 curl_close($ch);
-
 if (!$items_origin) {
     exit('❗Error en API origen');
 }
-
 $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
+//este es el Objeto que trae Vnvm , sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
+$datosClientes = (object)$getDecodedVnvm->articulos;
+
+    $registros = $datosClientes->registros;
+
+    $sku=$registros[0]->id;   
+//este es el objeto que trae Woocommerce, por el sku. Si existe el objeto termina la ejecucion 
+$params = [
+    'sku' => (string)$sku
+];
+$getSku = $woocommerce->get('products',$params);
+print_r($getSku);
+die;
+if (!$getSku) {
+    exit('❗Error en API origen');
+}
+
+$getSku=(object)$resultCreate;
+
+$idUpdate=$getSku->sku;
+
+if($idUpdate===$sku){
+
+    echo("termina la ejecucion, por loro xD");
+    
+}else{
+    echo("seguimos la ejecucion padreeeeee");
+}
+die;
+
+
 
 if (is_array($getDecodedVnvm) || is_object($getDecodedVnvm)) {
 
-    foreach ($getDecodedVnvm as $clientes => $datosClientes) {
-        foreach ($datosClientes->registros as $key => $value) {
-           
-            $data = [
-                'name' => $value->nombre,
-                'type' =>  "simple",
-                'regular_price' => '212',
-                'description' => $value->metaDescripcion,
-                'short_description' => 'asdasdasd',
-                'categories' => [
-                    [
-                        'id' => 9
-                    ],
-                    [
-                        'id' => 14
-                    ]
-                ],
-                'images' => [
-                    [
-                        'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-                    ],
-                    [
-                        'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
-                    ]
-                ]
-            ];
-        }
-    }
+    foreach ($datosClientes->registros as $key => $value) {
 
+        $data = [            
+            'name' => $value->nombre,
+            'type' =>  "simple",
+            'regular_price' => '212',
+            'description' => $value->metaDescripcion,
+            'short_description' => 'asdasdasd',
+            'sku'=>(string)$sku,
+            'categories' => [
+                [
+                    'id' => 9
+                ],
+                [
+                    'id' => 14
+                ]
+            ],
+            'images' => [
+                [
+                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
+                ],
+                [
+                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
+                ]
+            ]
+        ];
+    }
 } else {
 
     echo ("no entro <br>");
 }
 
+$resultCreate = $woocommerce->post('products',  $data);
 
-
-$result = $woocommerce->post('products',  $data);
-
-if (!$result) {
+if (!$resultCreate) {
     echo ("❗Error al actualizar productos \n");
 } else {
-    print("✔ Productos actualizados correctamente \n");
+    print("✔ Productos actualizados correctamente \n <br>");
+    print_r($resultCreate);
 }
-?>
+
+// $ObjResult=(object)$resultCreate;
+
+// $idUpdate=$ObjResult->id;
+
+// $dataUpdate = [
+//     'name'=>'lucas',
+//     'sku' => '1235'
+// ];
+
+// print_r($dataUpdate);
+
+// $dataUpdate=json_encode($dataUpdate);
+
+// print_r( $woocommerce->put('products/1777', $dataUpdate));
+
