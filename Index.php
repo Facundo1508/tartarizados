@@ -1,101 +1,84 @@
 <?php
 
+header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '/vendor/autoload.php';
+
 use Automattic\WooCommerce\Client;
 
 // Conexión WooCommerce API destino
 // ================================
-$url_API_woo = 'https://tartarizados.com/';
-$ck_API_woo = 'ck_1b5c123e34750a82fd7887ced57b0f5eac5c44b6';
-$cs_API_woo = 'cs_5c48d1a30bf8198d0e2cbe9974516081715565dd';
+$url_API_woo = 'https://pruebas.tartarizados.com/';
+$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 
 $woocommerce = new Client(
     $url_API_woo,
     $ck_API_woo,
     $cs_API_woo,
-    ['version' => 'wc/v3',
-    'query_string_auth'=>true]    
+    [
+        'version' => 'wc/v3',
+        'query_string_auth' => true,
+    ]
 );
-// ================================
+
+$getProductWoo = $woocommerce->get('products/1743');
+
+print_r($getProductWoo);
+die;
+
+// var_dump($getProductWoo);
+// die;
+
+$objProdcutWoo = (object)$getProductWoo;
 
 
+    $general = $objProdcutWoo;
 
-// Conexión API VNVM pedazo de loro origen!!!!!! Esto tenemos que postear 
-// ===================
-$mail="jose@artipas.es";
-$url_API="80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|CLI|GET|".$mail;"";
+        $id = $general->id;
+        $nombre = $general->name;
+        $slug = $general->slug;
+        $tipo = $general->type;
+        $status = $general->status;
+        $visible = $general->catalog_visibility;
+        $descripcion = $general->description;
+        $descripcionCorta = $general->short_description;
+        $sku = $general->sku;
+        $price = $general->price;
+        $desde = $general->date_on_sale_from;
+        $hasta = $general->date_on_sale_to;
+        $stockStatus = $general->stock_status;
+        $stockCantidad = $general->stock_quantity;
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_URL,$url_API);
-curl_setopt($ch, CURLOPT_HEADER, 0);
-
-echo "➜ Obteniendo datos origen Vnvm ... \n";
-$items_origin = curl_exec($ch);
-curl_close($ch);
-
-if ( ! $items_origin ) {
-    exit('❗Error en API origen');
-}
-
-// Obtenemos datos de la API de origen
-print_r($items_origin);
-
-
-// ===================
-// Construimos la data en base a los productos recuperados
-$item_data = [];
-foreach($vnvmClient as $vnvmClient){
-    
-    // Formamos el array a actualizar
-    $item_data[] = [
+        $dimensions = $objProdcutWoo->dimensions;
+            $largo = $dimensions->length;
+            $ancho = $dimensions->width;
+            $altura = $dimensions->height;
         
-        'mail'  => $vnvmClient->email,
-        'nombreFiscal'  => $vnvmClient->nombreFiscal,
-        'nombreComercial'  =>$vnvmClient->nombreComercial,
-        'nif' => $vnvmClient->nif,
-        'contacto'  => $vnvmClient->contacto,
-        'direccion' => $vnvmClient->direccion,
-        'codPostal'  => $vnvmClient->codigoPostal,
-        'localidad'  => $vnvmClient->localidad,
-        //Identificador de 2 caracteres, ejemplo: ES (españa) AR (argentina)
-        'pais'  => $vnvmClient->pais,
-        'telefono'  => $vnvmClient->telefono,
-        'telefonoMovil' => $vnvmClient->telefonoMovil,
-        'codFormaPago'  => $vnvmClient->formaPago,
-        'codIdioma' => $vnvmClient->idioma,
-        'regIva'  => $vnvmClient->regimenIVA,
+        $categories = $objProdcutWoo->categories;
+            $idCategoria = $categories->id;
+            $nombreCategoria = $categories->name;
+            $slugCategoria = $categories->slug;
+
+        //sugar tu tu tu tu tu tu oh honey honey tu tu tu tu tu tu https://youtu.be/M03hVvwEuuk?t=118
+        var_dump($general);
+        die;
+
+        $url_API = "80.35.251.17/cgi-vel/pruebas/vnvm/api.pro?w_as=5684|CLI|POST|".$mail;"|".$nombreFiscal;"|".$nombreComercial;"|".$NIF;"|".$contacto;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$telefono;"||CT3||R";
         
-    ];
-    
-}
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url_API);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch,CURLOPT_POST,true);
+        
+        echo "➜ Cargando Cliente \n";
+        $items_origin = curl_exec($ch);
 
-print_r($vnvmClient);
-print_r($item_data);
-
-?>
-
-<br>
-
-<?php
-echo "➜ Obteniendo datos origen Woocomerce ... \n";
-// AQUI QUIERO PROBAR SI FUNCIONA EL GET , PEDAZO DE LORIBIO
-$clientes = json_encode($woocommerce->get('customers/1'));
-
-print_r($clientes);
-
-
-
-
-
-
-// Actualización en lotes
-$result = $woocommerce->post('products/batch', $data);
-
-if (! $result) {
-    echo("❗Error al actualizar productos \n");
-} else {
-    print("✔ Productos actualizados correctamente \n");
-}
+        if (! $items_origin) {
+            echo("❗Error al actualizar productos \n");
+        } else {
+            print("✔ Productos actualizados correctamente \n");
+        }
+        curl_close($ch);
 
 ?>
