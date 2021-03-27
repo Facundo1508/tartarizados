@@ -1,0 +1,6 @@
+{
+    "name": "jimmy-pc/tartarizados",
+    "require": {
+        "automattic/woocommerce": "^3.0"
+    }
+}
