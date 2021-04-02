@@ -23,16 +23,13 @@ $woocommerce = new Client(
 
 $getProductWoo = $woocommerce->get('products/1743');
 
-print_r($getProductWoo);
-die;
-
 // var_dump($getProductWoo);
 // die;
 
 $objProdcutWoo = (object)$getProductWoo;
 
 
-    $general = $objProdcutWoo;
+        $general = $objProdcutWoo;
 
         $id = $general->id;
         $nombre = $general->name;
@@ -49,27 +46,25 @@ $objProdcutWoo = (object)$getProductWoo;
         $stockStatus = $general->stock_status;
         $stockCantidad = $general->stock_quantity;
 
-        $dimensions = $objProdcutWoo->dimensions;
-            $largo = $dimensions->length;
-            $ancho = $dimensions->width;
-            $altura = $dimensions->height;
+        // $dimensions = $objProdcutWoo->dimensions;
+        //     $largo = $dimensions->length;
+        //     $ancho = $dimensions->width;
+        //     $altura = $dimensions->height;
         
-        $categories = $objProdcutWoo->categories;
-            $idCategoria = $categories->id;
-            $nombreCategoria = $categories->name;
-            $slugCategoria = $categories->slug;
+        // $categories = $objProdcutWoo->categories;
+        //     $idCategoria = $categories->id;
+        //     $nombreCategoria = $categories->name;
+        //     $slugCategoria = $categories->slug;
 
         //sugar tu tu tu tu tu tu oh honey honey tu tu tu tu tu tu https://youtu.be/M03hVvwEuuk?t=118
-        var_dump($general);
-        die;
-
-        $url_API = "80.35.251.17/cgi-vel/pruebas/vnvm/api.pro?w_as=5684|CLI|POST|".$mail;"|".$nombreFiscal;"|".$nombreComercial;"|".$NIF;"|".$contacto;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$telefono;"||CT3||R";
+      
+        $url_API = "80.35.251.17/cgi-vel/pruebas/vnvm/api.pro?w_as=5684|ART_BUS|POST|".$sku;"|".$nombre;"|".$slug;"|".$status;"|".$visible;"|".$descripcion;"|".$descripcionCorta;"|".$price;"|".$desde;"|".$hasta;"|".$stockStatus;"|".$stockCantidad;"";
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url_API);
         curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch,CURLOPT_POST,true);
+        
         
         echo "➜ Cargando Cliente \n";
         $items_origin = curl_exec($ch);
@@ -80,5 +75,13 @@ $objProdcutWoo = (object)$getProductWoo;
             print("✔ Productos actualizados correctamente \n");
         }
         curl_close($ch);
+        
+        if (!$items_origin) {
+            exit('❗Error en API origen');
+        }
+        
+        $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
+
+        print_r($getDecodedVnvm);
 
 ?>

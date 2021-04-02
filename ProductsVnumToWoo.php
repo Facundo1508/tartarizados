@@ -1,6 +1,4 @@
 <?php
-
-
 require __DIR__ . '/vendor/autoload.php';
 
 use Automattic\WooCommerce\Client;
@@ -24,7 +22,7 @@ $woocommerce = new Client(
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
 
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|428|428";
+$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|555|555";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -36,7 +34,7 @@ echo "➜ Obteniendo datos origen Vnvm ... \n";
 $items_origin = curl_exec($ch);
 
 curl_close($ch);
-class ProductsVnvmToWoo{
+
     
     if (!$items_origin) {
         exit('❗Error en API origen');
@@ -106,24 +104,6 @@ class ProductsVnvmToWoo{
         }
     }
     
-    function addProductos(){
-     //holaaaa como están este video lo quería hacer hace rato, pero primero quiero pedir disculpas porque en realidad la única idiota soy sho, porque falte el respeto, porque no di el ejemplo, porque hablé sin ¿hablar? y metí a todo el mundo en una bolsa
-    }
-    
-    // $ObjResult=(object)$resultCreate;
-    
-    // $idUpdate=$ObjResult->id;
-    
-    // $dataUpdate = [
-    //     'name'=>'lucas',
-    //     'sku' => '1235'
-    // ];
-    
-    // print_r($dataUpdate);
-    
-    // $dataUpdate=json_encode($dataUpdate);
-    
-    // print_r( $woocommerce->put('products/1777', $dataUpdate));
 
-}
+
 

@@ -57,57 +57,35 @@ if (is_array($getDecodedVnvm) || is_object($getDecodedVnvm)) {
         foreach ($datosClientes->registros as $key => $value) {
 
             $data = [
-                'email' => $value->email,
-                'first_name' => $value->nombreFiscal,
-                'last_name' => $value->nombreFiscal,
-                'username' => 'john.doe',
+                'email' => (string)$value->email,
+                'first_name' => (string)$value->nombreFiscal,
+                'last_name' => (string)$value->nombreFiscal,
+                'username' => (string)'john.doe',
                 'billing' => [
-                    'first_name' => 'John',
-                    'last_name' => 'Doe',
-                    'company' => $value->nombreComercial,
-                    'address_1' => $value->direccion,
-                    'address_2' => $value->direccion,
-                    'city' => $value->localidad,
-                    'state' => $value->provincia,
-                    'postcode' => $value->codigoPostal,
-                    'country' => 'US',
-                    'email' =>  $value->email,
-                    'phone' => $value->telefono
+                    'first_name' => (string)'John',
+                    'last_name' => (string)'Doe',
+                    'company' => (string)$value->nombreComercial,
+                    'address_1' => (string)$value->direccion,
+                    'address_2' => (string)$value->direccion,
+                    'city' => (string)$value->localidad,
+                    'state' => (string)$value->provincia,
+                    'postcode' => (string)$value->codigoPostal,
+                    'country' => (string)'US',
+                    'email' =>  (string)$value->email,
+                    'phone' => (string)$value->telefono
                 ],
                 'shipping' => [
-                    'first_name' => $value->nombreFiscal,
-                    'last_name' => $value->nombreFiscal,
-                    'company' => $value->nombreComercial,
-                    'address_1' => $value->direccion,
-                    'address_2' => $value->direccion,
-                    'city' => $value->localidad,
-                    'state' => $value->provincia,
-                    'postcode' => $value->codigoPostal,
-                    'country' => 'US'
+                    'first_name' => (string)$value->nombreFiscal,
+                    'last_name' => (string)$value->nombreFiscal,
+                    'company' => (string)$value->nombreComercial,
+                    'address_1' => (string)$value->direccion,
+                    'address_2' => (string)$value->direccion,
+                    'city' => (string)$value->localidad,
+                    'state' => (string)$value->provincia,
+                    'postcode' => (string)$value->codigoPostal,
+                    'country' => (string)'US'
                 ]
-            ];
-            // $idWoo=$value->id;
-            // $usernameWoo=$value->nombreFiscal;
-            // $companyWoo=;
-            // $firstNameWoo=;
-            // $lastNameWoo=;
-            // $billing_dniWoo=$value->nif;
-            // $billing_vatWoo=$value->nif;
-            // $adrees1Woo=;
-            // $postCodeWoo=;
-            // $cityWoo=;
-
-            // $countryWoo=$value->pais;//obj
-
-            // $phoneWoo=$value->telefono;
-            // $emailWoo=$value->email;
-            // $lenguajeWoo=$value->idioma;//obj
-            // $roleWoo=$value->grupo;//obj
-            // $fec_nacWoo="";
-            // $newsletterWoo=$value->aceptaRGPD;
-            // $passwordWoo=$value->contrasea;
-            // $dateCreateWoo="";
-            // $billingWoo="";
+            ];           
         }
     }
 } else {

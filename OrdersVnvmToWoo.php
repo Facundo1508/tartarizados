@@ -25,11 +25,6 @@ $woocommerce = new Client(
 // ===================
 $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|PED|GET";
 
-print_r($woocommerce->get('orders'));
-die;
-
-
-
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url_API);
@@ -37,14 +32,8 @@ curl_setopt($ch, CURLOPT_HEADER, 0);
 
 echo "➜ Obteniendo datos origen Vnvm ... \n";
 $items_origin = curl_exec($ch);
-?>
-
-<br>
-
-<?php
-print_r($items_origin);
-die;
-
+// print_r($woocommerce->get('orders'));
+// die;
 curl_close($ch);
 
 if (!$items_origin) {
@@ -52,6 +41,13 @@ if (!$items_origin) {
 }
 
 $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
+
+print_r($items_origin);
+die;
+
+?>
+<br>
+<?php
 
 if (is_array($getDecodedVnvm) || is_object($getDecodedVnvm)) {
 
@@ -82,8 +78,6 @@ if (is_array($getDecodedVnvm) || is_object($getDecodedVnvm)) {
 
     echo ("no entro <br>");
 }
-
-
 
 $result = $woocommerce->post('products',  $data);
 
