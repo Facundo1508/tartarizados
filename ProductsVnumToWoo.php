@@ -74,25 +74,19 @@ if ($getSku) {
     // die;
 
     foreach ($imgVisd as $key => $value) {
-
+        
         $images[$key] = [ 
             'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
         ];
     }
 
     $catFamilia = $registros[0]->familia;
-
+    $familia = [];
     foreach ($catFamilia as $key1 => $value1) {
-
-        $familia[$key1] = [
-            'id' => $value1->id,
-            'name' => $value1->nombre
-        ];
-
+                   
+        $familia[$key1] = $value1;         
+      
     }
-
-    print_r($catFamilia);
-    die;
 
     $data = [
 
