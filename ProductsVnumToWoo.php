@@ -22,7 +22,7 @@ $woocommerce = new Client(
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
 
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|320|320";
+$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|182|182";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -80,25 +80,36 @@ if ($getSku) {
         ];
     }
 
-    // print_r($images);
-    // die;
+    $catFamilia = $registros[0]->familia;
+
+    foreach ($catFamilia as $key1 => $value1) {
+
+        $familia[$key1] = [
+            'id' => $value1->id,
+            'name' => $value1->nombre
+        ];
+
+    }
+
+    print_r($catFamilia);
+    die;
 
     $data = [
 
         'name' => $registros[0]->nombre,
-        'type' =>  'simple',
-        'price' => '',
-        'regular_price' => '212',
-        'description' => $registros[0]->metaDescripcion,
-        'short_description' => 'asdasdasd',
+        'type' =>  $registros[0]->tipo->nombre,
+        'price' => $registros[0]->{'tarifa-1'}->precio,
+        'regular_price' => $registros[0]->{'tarifa-1'}->precio,
+        'description' => $registros[0]->catalogo,
+        'short_description' => $registros[0]->metaDescripcion,
         'sku' => (string)$sku,
 
-        // 'dimensions' => [
+        'dimensions' => [
 
-        //     'length' => "",
-        //     'width' =>"",
-        //     'height' => ""
-        // ],
+            'length' => $registros[0]-> largo,
+            'width' => $registros[0]-> ancho,
+            'height' => $registros[0]-> alto
+        ],
 
         // 'stock_quantity' => null,
         // 'stock_status' => '',
@@ -111,31 +122,36 @@ if ($getSku) {
         // 'date_on_sale_from' => null,
         // 'date_on_sale_to' => null,
 
+        //Cuantas categorías puede tener un producto de Vnvn
+        'categories' => $familia,
 
-        'categories' => [
-            [
-                'id' => 9
-            ],
-            [
-                'id' => 14
-            ]
-        ],
-
-        'images' => $images,
-
-        // 'images' => [
+        // 'categories' => [
         //     [
-        //         'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
+        //         'id' => $registros[0]->familia->id,
+        //         'name' => $registros[0]->familia->nombre
+        //     ],
+        //     [
+        //         'id' => $registros[0]->familia->id,
+        //         'name' => $registros[0]->familia->nombre
         //     ]
-        // ]
+        // ],
+
+        //Las imagenes que no tienen imagenes dan JSONERROR
+        // 'images' => $images,
+
+        'images' => [
+            [
+                'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
+            ]
+        ]
         // 'downloads' => [
 
         // ],
 
     ];
 
-    // print_r($data);
-    // die;
+    print_r($data);
+    die;
 
     $resultCreate = $woocommerce->post('products',  $data);
 
