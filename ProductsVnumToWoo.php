@@ -22,7 +22,7 @@ $woocommerce = new Client(
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
 
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|182|182";
+$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|192|192";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -87,65 +87,44 @@ if ($getSku) {
         $familia[$key1] = $value1;         
       
     }
-
     $data = [
-
         'name' => $registros[0]->nombre,
-        'type' =>  $registros[0]->tipo->nombre,
-        'price' => $registros[0]->{'tarifa-1'}->precio,
-        'regular_price' => $registros[0]->{'tarifa-1'}->precio,
+        // Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
+        'type' => 'simple',
+        'regular_price' =>  (string)$registros[0]->{'tarifa-1'}->precio,
         'description' => $registros[0]->catalogo,
         'short_description' => $registros[0]->metaDescripcion,
         'sku' => (string)$sku,
-
         'dimensions' => [
 
-            'length' => $registros[0]-> largo,
-            'width' => $registros[0]-> ancho,
-            'height' => $registros[0]-> alto
+            'length' => (string)$registros[0]-> largo,
+            'width' => (string)$registros[0]-> ancho,
+            'height' => (string)$registros[0]-> alto
         ],
-
-        // 'stock_quantity' => null,
-        // 'stock_status' => '',
-        // 'catalog_visibility' => '',
-        // //oferta
-        // 'sale_price' => '',
-        // //novedad
-        // 'featured' => null,
-        // //promoción
-        // 'date_on_sale_from' => null,
+        
+        'stock_quantity' => $registros[0]->existencias->existencias,
+        //stock_status Options: instock, outofstock, onbackorder. Default is instock.
+        //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
+        'stock_status' =>'instock',
+        //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
+        'catalog_visibility' => 'visible',
+        'sale_price' => (string)$registros[0]->oferta,
+        //esto es un boolean por defecto false
+        //'featured' => false,
+        // 'date_on_sale_from' =>null,
         // 'date_on_sale_to' => null,
-
-        //Cuantas categorías puede tener un producto de Vnvn
-        'categories' => $familia,
-
-        // 'categories' => [
-        //     [
-        //         'id' => $registros[0]->familia->id,
-        //         'name' => $registros[0]->familia->nombre
-        //     ],
-        //     [
-        //         'id' => $registros[0]->familia->id,
-        //         'name' => $registros[0]->familia->nombre
-        //     ]
-        // ],
-
-        //Las imagenes que no tienen imagenes dan JSONERROR
-        // 'images' => $images,
-
+        //para la categoria , la misma tiene que estar creada previamente en WOOCOMERCE y el id es numerico 
+        'categories' => [
+            [
+                'id' => '9'
+            ],
+        ],
         'images' => [
             [
                 'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
             ]
         ]
-        // 'downloads' => [
-
-        // ],
-
     ];
-
-    print_r($data);
-    die;
 
     $resultCreate = $woocommerce->post('products',  $data);
 
