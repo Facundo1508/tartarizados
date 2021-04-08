@@ -23,7 +23,7 @@ $woocommerce = new Client(
 // ================================
 // Conexión API VNVM pedazo de loro origen!!!!!! Esto tenemos que postear 
 // ===================
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|PED|GET";
+$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|info@reloga.net|1|316929|29-09-2020";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

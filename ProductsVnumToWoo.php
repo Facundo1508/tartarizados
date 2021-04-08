@@ -22,7 +22,7 @@ $woocommerce = new Client(
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
 
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|192|192";
+$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|100|100";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
