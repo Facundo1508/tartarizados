@@ -23,7 +23,7 @@ $woocommerce = new Client(
 // ================================
 // Conexión API VNVM pedazo de loro origen!!!!!! Esto tenemos que postear 
 // ===================
-$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|info@reloga.net|1|316929|29-09-2020";
+$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|jose@artipas.es|119|9|08-04-2021";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -44,40 +44,56 @@ $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_
 
 print_r($items_origin);
 die;
-
 ?>
 <br>
 <?php
+ 
+    $data = [
+        'payment_method' => 'bacs',
+        'payment_method_title' => 'Direct Bank Transfer',
+        'set_paid' => true,
+        'billing' => [
+            'first_name' => $obj->nombre,
+            'last_name' =>  $obj->nombre,
+            'address_1' => $obj->direccion,
+            'address_2' => $obj->direccion,
+            'city' => $obj->localidad,
+            'state' =>$obj->provincia,
+            'postcode' => $obj->codigoPostal,
+            'country' => $obj->pais->siglas,
+            'email' => $obj->email,
+            'phone' => '-'
+        ],
+        'shipping' => [
+            'first_name' => $obj->nombre,
+            'last_name' => $obj->nombre,
+            'address_1' => $obj->direccion,
+            'address_2' => '',
+            'city' => $obj->localidad,
+            'state' => $obj->provincia,
+            'postcode' =>$obj->codigoPostal,
+            'country' => $obj->pais->siglas
+        ],
+        'line_items' => [
+            [
+                'product_id' =>  $obj->refArticulo,
+                'quantity' => 2
+            ],
+            [
+                'product_id' => 22,
+                'variation_id' => 23,
+                'quantity' => 1
+            ]
+        ],
+        'shipping_lines' => [
+            [
+                'method_id' => 'flat_rate',
+                'method_title' => 'Flat Rate',
+                'total' => '10.00'
+            ]
+        ]
+    ];
 
-if (is_array($getDecodedVnvm) || is_object($getDecodedVnvm)) {
-
-    foreach ($getDecodedVnvm as $clientes => $datosClientes) {
-        foreach ($datosClientes->registros as $key => $value) {
-           
-            $billing = $objClientWoo->billing;
-
-            $mail = $billing->email;
-            $nombreFiscal = $billing -> first_name." ";$billing->last_name;
-            $nombreComercial = $billing -> company;
-            $NIF = "123456";
-            $contacto = "hola";
-            $direccion = $billing->address_1;
-            $codPostal = $billing->postcode;
-            $localidad = $billing->city;
-            //Identificador de 2 caracteres, ejemplo: ES (españa) AR (argentina)
-            $pais = $billing->country;
-            $telefono = $billing->phone;
-            $telefonoMovil = $billing->phone;
-            $codFormaPago = "CT3";
-            $codIdioma = "";
-            $regIva = "A";
-        }
-    }
-
-} else {
-
-    echo ("no entro <br>");
-}
 
 $result = $woocommerce->post('products',  $data);
 

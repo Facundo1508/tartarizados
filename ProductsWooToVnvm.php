@@ -23,9 +23,6 @@ $woocommerce = new Client(
 
 $getProductWoo = $woocommerce->get('products/1743');
 
-// var_dump($getProductWoo);
-// die;
-
 $objProdcutWoo = (object)$getProductWoo;
 
 
@@ -45,7 +42,7 @@ $objProdcutWoo = (object)$getProductWoo;
         $hasta = $general->date_on_sale_to;
         $stockStatus = $general->stock_status;
         $stockCantidad = $general->stock_quantity;
-
+    
         // $dimensions = $objProdcutWoo->dimensions;
         //     $largo = $dimensions->length;
         //     $ancho = $dimensions->width;
@@ -58,17 +55,19 @@ $objProdcutWoo = (object)$getProductWoo;
 
         //sugar tu tu tu tu tu tu oh honey honey tu tu tu tu tu tu https://youtu.be/M03hVvwEuuk?t=118
       
-        $url_API = "80.35.251.17/cgi-vel/pruebas/vnvm/api.pro?w_as=5684|ART_BUS|POST|".$sku;"|".$nombre;"|".$slug;"|".$status;"|".$visible;"|".$descripcion;"|".$descripcionCorta;"|".$price;"|".$desde;"|".$hasta;"|".$stockStatus;"|".$stockCantidad;"";
+        $url_API = "80.35.251.17/cgi-vel/pruebas/vnvm/api.pro?w_as=5684|ART_BUS|POST|".$sku."|".$nombre."|".$slug."|".$status."|".$visible."|".$descripcion."|".$descripcionCorta."|".$price."|".$desde."|".$hasta."|".$stockStatus."|".$stockCantidad."";
         
+     
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url_API);
         curl_setopt($ch, CURLOPT_HEADER, 0);
-        
+
         
         echo "➜ Cargando Cliente \n";
         $items_origin = curl_exec($ch);
-
+        print_r($items_origin);
+        die;
         if (! $items_origin) {
             echo("❗Error al actualizar productos \n");
         } else {
