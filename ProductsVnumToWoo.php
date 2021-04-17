@@ -113,6 +113,7 @@ if ($getSku) {
         //'featured' => false,
         // 'date_on_sale_from' =>null,
         // 'date_on_sale_to' => null,
+        
         //para la categoria , la misma tiene que estar creada previamente en WOOCOMERCE y el id es numerico 
         'categories' => [
             [

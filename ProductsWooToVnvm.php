@@ -22,11 +22,12 @@ $woocommerce = new Client(
 );
 
 $getProductWoo = $woocommerce->get('products/1743');
+// print_r($getProductWoo);
+// die;
 
 $objProdcutWoo = (object)$getProductWoo;
 
-
-        $general = $objProdcutWoo;
+    $general = $objProdcutWoo;
 
         $id = $general->id;
         $nombre = $general->name;
@@ -36,12 +37,13 @@ $objProdcutWoo = (object)$getProductWoo;
         $visible = $general->catalog_visibility;
         $descripcion = $general->description;
         $descripcionCorta = $general->short_description;
-        $sku = $general->sku;
+        $sku = $general->sku === "" ? exit("El articulo no tiene sku") : $general->sku;
+        // $sku = $general->sku = "123";
         $price = $general->price;
-        $desde = $general->date_on_sale_from;
-        $hasta = $general->date_on_sale_to;
+        $desde = empty($general->date_on_sale_from) ? date("Y-m-d") : $general->date_on_sale_from;
+        $hasta = empty($general->date_on_sale_to) ? date("Y-m-d", strtotime('+10 days')) : $general->date_on_sale_to;
         $stockStatus = $general->stock_status;
-        $stockCantidad = $general->stock_quantity;
+        $stockCantidad = empty($general->stock_quantity) ? "0" : $general->stock_quantity;
     
         // $dimensions = $objProdcutWoo->dimensions;
         //     $largo = $dimensions->length;
@@ -53,9 +55,16 @@ $objProdcutWoo = (object)$getProductWoo;
         //     $nombreCategoria = $categories->name;
         //     $slugCategoria = $categories->slug;
 
-        //sugar tu tu tu tu tu tu oh honey honey tu tu tu tu tu tu https://youtu.be/M03hVvwEuuk?t=118
+        // print_r($id. '\n' .$nombre. '\n');
+        // print_r($slug. '\n' .$tipo. '\n');
+        // print_r($status. '\n' .$visible. '\n');
+        // print_r($descripcion. '\n' .$descripcionCorta. '\n');
+        // print_r($sku. '\n' .$price. '\n');
+        // print_r($desde. '\n' .$hasta. '\n');
+        // print_r($stockStatus. '\n' .$stockCantidad. '\n');
+        // die;
       
-        $url_API = "80.35.251.17/cgi-vel/pruebas/vnvm/api.pro?w_as=5684|ART_BUS|POST|".$sku."|".$nombre."|".$slug."|".$status."|".$visible."|".$descripcion."|".$descripcionCorta."|".$price."|".$desde."|".$hasta."|".$stockStatus."|".$stockCantidad."";
+        $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|ART_BUS|POST|".$sku."|".$nombre."|".$slug."|".$status."|".$visible."|".$descripcion."|".$descripcionCorta."|".$price."|".$desde."|".$hasta."|".$stockStatus."|".$stockCantidad."";
         
      
         $ch = curl_init();
@@ -64,23 +73,26 @@ $objProdcutWoo = (object)$getProductWoo;
         curl_setopt($ch, CURLOPT_HEADER, 0);
 
         
-        echo "➜ Cargando Cliente \n";
+        echo "➜ Cargando Produto \n";
         $items_origin = curl_exec($ch);
-        print_r($items_origin);
-        die;
+        
+        // print_r($items_origin);
+        // die;
+
         if (! $items_origin) {
             echo("❗Error al actualizar productos \n");
         } else {
             print("✔ Productos actualizados correctamente \n");
         }
+
         curl_close($ch);
         
-        if (!$items_origin) {
-            exit('❗Error en API origen');
-        }
+        // if (!$items_origin) {
+        //     exit('❗Error en API origen');
+        // }
         
-        $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
+        // $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
 
-        print_r($getDecodedVnvm);
+        // print_r($getDecodedVnvm);
 
 ?>

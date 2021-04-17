@@ -23,28 +23,39 @@ $woocommerce = new Client(
 
 $getClienteWoo = $woocommerce->get('customers/1');
 
+// $params = [
+//     'clave' => (string)$clave
+// ];
+
+// $getClave = $woocommerce->get('customers', $params);
+
+
+// if ($getClave) {
+    
+//     $idUpdate = $getClave[0]->id;
+//     exit('❗Ya existe el producto, clave = ' . $clave);
+
+// } else {
 
 $objClientWoo = (object)$getClienteWoo;
-
 
     $billing = $objClientWoo->billing;
 
         $mail = $billing->email;
         $nombreFiscal = $billing -> first_name." ";$billing->last_name;
-        $nombreComercial = $billing -> company;
+        $nombreComercial = $billing -> company === "" ? "sinCompany" : $billing -> company;
         $NIF = "123456";
-        $contacto = "hola";
+        $contacto = "tusmuertos";
         $direccion = $billing->address_1;
         $codPostal = $billing->postcode;
         $localidad = $billing->city;
-        //Identificador de 2 caracteres, ejemplo: ES (españa) AR (argentina)
         $pais = $billing->country;
-        $telefono = $billing->phone;
-        $telefonoMovil = $billing->phone;
+        $telefono = trim($billing->phone);
+        $telefonoMovil = trim($billing->phone);
         $codFormaPago = "CT3";
-        $codIdioma = "";
+        //Identificador de 2 caracteres, ejemplo: ES (españa) AR (argentina)
+        $codIdioma = "ES";
         $regIva = "A";
-
 
         // // $regIvaList = [
         // //     "N" => "Nacional",
@@ -55,21 +66,22 @@ $objClientWoo = (object)$getClienteWoo;
         // //     "1" => "Igic",
         // //     "2" => "Ipsi",
         // // ];
-        $url_API = "80.35.251.17/cgi-vel/pruebas/vnvm/api.pro?w_as=5684|CLI|POST|".$mail;"|".$nombreFiscal;"|".$nombreComercial;"|".$NIF;"|".$contacto;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$telefono;"||CT3||R";
+        
+        
+        $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|CLI|POST|".$mail;"|".$nombreFiscal;"|".$nombreComercial;"|".$NIF;"|".$contacto;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$telefono;"||CT3||R";
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url_API);
         curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch,CURLOPT_POST,true);
         
         echo "➜ Cargando Cliente \n";
         $items_origin = curl_exec($ch);
 
         if (! $items_origin) {
-            echo("❗Error al actualizar productos \n");
+            echo("❗Error al actualizar clientes \n");
         } else {
-            print("✔ Productos actualizados correctamente \n");
+            print("✔ Clientes actualizados correctamente \n");
         }
         curl_close($ch);
 
