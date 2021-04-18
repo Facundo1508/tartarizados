@@ -62,7 +62,7 @@ $objOrderWoo = (object)$getPedidosWoo;
         $codFormaPago = "CT3";
         $confirmado = $objOrderWoo->status;
         
-        $line_items = (object)[
+        $line_items =(Array)[
             [
                 'product_id' => 93,
                 'name' => "Loro",
@@ -82,40 +82,28 @@ $objOrderWoo = (object)$getPedidosWoo;
                 'total' => 30
             ]
         ];
-
-        // $jsonPrueba = "{
-        //     "line_items":[
-        //        {
-        //           "product_id":93,
-        //           "name":"Loro",
-        //           "quantity":1,
-        //           "total":20
-        //        },
-        //        {
-        //           "product_id":93,
-        //           "name":"Loro",
-        //           "quantity":1,
-        //           "total":20
-        //        }
-        //     ]
-        // }"
-
-        print_r($line_items->name);
-        die;
-        
-        foreach ($variable as $key => $value) {
+        $salidaCompleta="";
+        foreach($line_items as $valor) {
 
             $pv_det = "PV-DET";
 
-            $refArticulo = $value->product_id;
-            $nombreArticulo = $value->name;
-            $cantidadArticulo = $value->quantity;
-            $precioArticulo = $value->total;
+            $refArticulo = $valor['product_id'];
+            $nombreArticulo = $valor['name'];
+            $cantidadArticulo = $valor['quantity'];
+            $precioArticulo = $valor['total'];
             $desc1 = "0";
             $desc2 = "0";
             $desc3 = "0";
+            
+            $salida= $pv_det."|".$refArticulo."|". $nombreArticulo."|".$cantidadArticulo."|". $precioArticulo."|".$desc1."|".$desc2."|".$desc3."|";
+            
+            $salidaCompleta=$salidaCompleta+$salida;
+            
         }
 
+        print_r($salidaCompleta);
+        die;
+   
         
         //$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST|info@reloga.net|1|326296|06-04-2021|SU REF|Nombre dir envio|telefono dir envio|dirección dir envio|08940|Cornella de Llobregat|ES|Observaciones dir envio|Observaciones|CF1|0|PV-DET|31010170|Descripcion articulo|5|10|0|0|0|PV-DET|31010376|Descripcion articulo 2|15|30|0|0|0|PV-DET|895248|Descripcion articulo 3|25|35|0|0|0";
         $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|CLI|POST|".$mail;"|".$nombreFiscal;"|".$nombreComercial;"|".$NIF;"|".$contacto;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$telefono;"||CT3||R";
