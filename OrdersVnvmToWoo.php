@@ -49,7 +49,8 @@ die;
 <?php
  
     $data = [
-        'payment_method' => 'bacs',
+        'parent_id'=>'120',
+        'payment_method' => $obj->formaPago,
         'payment_method_title' => 'Direct Bank Transfer',
         'set_paid' => true,
         'billing' => [
@@ -76,11 +77,11 @@ die;
         ],
         'line_items' => [
             [
-                'product_id' =>  $obj->refArticulo,
+                'sku' =>  $obj->refArticulo,
                 'quantity' => 2
             ],
             [
-                'product_id' => 22,
+                'sku' => 22,
                 'variation_id' => 23,
                 'quantity' => 1
             ]
@@ -95,7 +96,7 @@ die;
     ];
 
 
-$result = $woocommerce->post('products',  $data);
+$result = $woocommerce->post('orders',  $data);
 
 if (!$result) {
     echo ("❗Error al actualizar productos \n");
