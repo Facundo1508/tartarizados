@@ -22,6 +22,7 @@ $woocommerce = new Client(
 );
 
 $getPedidosWoo = $woocommerce->get('orders/1739');
+
 // print_r($getPedidosWoo);
 // die;
 
@@ -82,6 +83,7 @@ $objOrderWoo = (object)$getPedidosWoo;
                 'total' => 30
             ]
         ];
+        
         $salidaCompleta="";
         foreach($line_items as $valor) {
 
@@ -97,7 +99,7 @@ $objOrderWoo = (object)$getPedidosWoo;
             
             $salida= $pv_det."|".$refArticulo."|". $nombreArticulo."|".$cantidadArticulo."|". $precioArticulo."|".$desc1."|".$desc2."|".$desc3."|";
             
-            $salidaCompleta=$salidaCompleta+$salida;
+            $salidaCompleta =+ $salida;
             
         }
 
