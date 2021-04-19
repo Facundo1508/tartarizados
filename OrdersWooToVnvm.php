@@ -22,6 +22,8 @@ $woocommerce = new Client(
 );
 
 $getPedidosWoo = $woocommerce->get('orders/1739');
+// print_r($getPedidosWoo);
+// die;
 
 // print_r($getPedidosWoo);
 // die;
@@ -48,6 +50,7 @@ $objOrderWoo = (object)$getPedidosWoo;
         $billing = $objOrderWoo->billing;
 
         $mail = $billing->email;
+        $numero = $objOrderWoo->number;
         $serie = $objOrderWoo->parent_id;
         $fecha = $objOrderWoo->date_created;
         $suRef = $objOrderWoo->id;
@@ -58,10 +61,11 @@ $objOrderWoo = (object)$getPedidosWoo;
         $codPostal = $billing->postcode;
         $localidad = $billing->city;
         $pais = $billing->country;
-        $observacionesEnvio = "";
-        $observaciones = $objOrderWoo->customer_note;
+        $observacionesEnvio = "hola";
+        $observaciones = "chau";
         $codFormaPago = "CT3";
-        $confirmado = $objOrderWoo->status;
+        //se manda 0/1 por defecto al ser una lista de string y esto un booleano $objOrderWoo->status
+        $confirmado = "1";
         
         $line_items =(Array)[
             [
@@ -83,7 +87,7 @@ $objOrderWoo = (object)$getPedidosWoo;
                 'total' => 30
             ]
         ];
-        
+
         $salidaCompleta="";
         foreach($line_items as $valor) {
 
@@ -99,17 +103,25 @@ $objOrderWoo = (object)$getPedidosWoo;
             
             $salida= $pv_det."|".$refArticulo."|". $nombreArticulo."|".$cantidadArticulo."|". $precioArticulo."|".$desc1."|".$desc2."|".$desc3."|";
             
-            $salidaCompleta =+ $salida;
+            $salidaCompleta = $salidaCompleta.$salida;
             
         }
 
-        print_r($salidaCompleta);
-        die;
+        // print_r($mail ."\n". $numero."\n");
+        // print_r($serie ."\n". $fecha."\n");
+        // print_r($suRef ."\n". $nombreFiscal."\n");
+        // print_r($telefono ."\n". $direccion."\n");
+        // print_r($codPostal ."\n". $localidad."\n");
+        // print_r($pais ."\n". $observacionesEnvio."\n");
+        // print_r($observaciones ."\n". $codFormaPago."\n");
+        // print_r($confirmado ."\n");
+        // print_r($line_items);
+        // die;
+        
    
         
-        //$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST|info@reloga.net|1|326296|06-04-2021|SU REF|Nombre dir envio|telefono dir envio|dirección dir envio|08940|Cornella de Llobregat|ES|Observaciones dir envio|Observaciones|CF1|0|PV-DET|31010170|Descripcion articulo|5|10|0|0|0|PV-DET|31010376|Descripcion articulo 2|15|30|0|0|0|PV-DET|895248|Descripcion articulo 3|25|35|0|0|0";
-        $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|CLI|POST|".$mail;"|".$nombreFiscal;"|".$nombreComercial;"|".$NIF;"|".$contacto;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$telefono;"||CT3||R";
-        
+        $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST|".$mail;"|".$numero;"|".$serie;"|".$fecha;"|".$suRef;"|".$nombreFiscal;"|".$telefono;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$observacionesEnvio;"|".$observaciones;"|".$codFormaPago;"|".$confirmado;"|".$salidaCompleta;
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url_API);
