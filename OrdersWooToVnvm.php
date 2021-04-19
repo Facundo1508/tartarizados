@@ -44,9 +44,6 @@ $getPedidosWoo = $woocommerce->get('orders/1739');
 
 $objOrderWoo = (object)$getPedidosWoo;
 
-
-
-
         $billing = $objOrderWoo->billing;
 
         $mail = $billing->email;
