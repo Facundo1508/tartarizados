@@ -20,13 +20,13 @@ $woocommerce = new Client(
         'query_string_auth' => true,
     ]
 );
-
-$getPedidosWoo = $woocommerce->get('orders/1739');
-// print_r($getPedidosWoo);
+$id = $_POST['id'];
+// print_r('orders/'.$id);
 // die;
+$getPedidosWoo = $woocommerce->get('orders/'.$id);
 
-// print_r($getPedidosWoo);
-// die;
+//  print_r($getPedidosWoo);
+//  die;
 
 // $params = [
 //     'clave' => (string)$clave
@@ -128,9 +128,9 @@ $objOrderWoo = (object)$getPedidosWoo;
         $items_origin = curl_exec($ch);
 
         if (! $items_origin) {
-            echo("❗Error al actualizar clientes \n");
+            echo("❗Error al actualizar pedidos \n");
         } else {
-            print("✔ Clientes actualizados correctamente \n");
+            print("✔ Pedidos actualizados correctamente \n");
         }
         curl_close($ch);
 

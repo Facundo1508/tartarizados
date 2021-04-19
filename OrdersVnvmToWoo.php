@@ -23,6 +23,7 @@ $woocommerce = new Client(
 // ================================
 // Conexión API VNVM pedazo de loro origen!!!!!! Esto tenemos que postear 
 // ===================
+$id = $_POST['id'];
 $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|jose@artipas.es|119|9|08-04-2021";
 
 $ch = curl_init();

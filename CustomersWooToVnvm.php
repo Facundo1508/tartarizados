@@ -20,8 +20,8 @@ $woocommerce = new Client(
         'query_string_auth' => true,
     ]
 );
-
-$getClienteWoo = $woocommerce->get('customers/1');
+$id = $_POST['id'];
+$getClienteWoo = $woocommerce->get('customers/'.$id);
 
 // $params = [
 //     'clave' => (string)$clave

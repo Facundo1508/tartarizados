@@ -20,8 +20,8 @@ $woocommerce = new Client(
         'query_string_auth' => true,
     ]
 );
-
-$getProductWoo = $woocommerce->get('products/1743');
+$id = $_POST['id'];
+$getProductWoo = $woocommerce->get('products/'.$id);
 // print_r($getProductWoo);
 // die;
 
