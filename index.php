@@ -50,6 +50,9 @@ De vnvm a woocommerce
 </h3>
 </h1>
 <button onclick="location.href='OrdersVnumToWoo.php'"> MIGRAR PEDIDOS</button>
+<br>
+<br>
+<br>
 
 <hr class="solid">
 
@@ -91,5 +94,8 @@ De woocommerce a vnvm
 </h3>
 </h1>
 <button onclick="location.href='CustomersWooToVnvm.php'"> MIGRAR CLIENTES</button>
+<br>
+<br>
+<br>
 </body>
 </html>
