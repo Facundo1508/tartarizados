@@ -47,6 +47,10 @@ curl_close($ch);
     $datosClientes = (object)$getDecodedVnvm->articulos;
     
     $registros = $datosClientes->registros;
+    if( $datosClientes->totalRegistros <= 0 ){
+        echo("No se encontraron registros con el Id proporcionado.");
+        exit();
+    }
     
     $int=0;
     foreach($registros as $registros) {
@@ -121,11 +125,7 @@ curl_close($ch);
                             'id' => '9'
                         ],
                     ],
-                    'images' => [
-                        [
-                            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-                        ]
-                    ]
+                    'images' => $images
                 ];
             }
             $resultCreate = $woocommerce->post('products',  $data);

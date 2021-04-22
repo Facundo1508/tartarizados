@@ -58,6 +58,11 @@ $datosClientes = (object)$getDecodedVnvm->articulos;
 
 $registros = $datosClientes->registros;
 
+if( $datosClientes->totalRegistros <= 0 ){
+    echo("No se encontraron registros con el Id proporcionado.");
+    exit();
+}
+
 $sku = $registros[0]->id;
 
 //Este es el objeto que trae Woocommerce, por el sku. Si existe el objeto termina la ejecucion 
@@ -130,11 +135,7 @@ if ($getSku) {
                 'id' => '9'
             ],
         ],
-        'images' => [
-            [
-                'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-            ]
-        ]
+        'images' => $images
     ];
 
     $resultCreate = $woocommerce->post('products',  $data);
