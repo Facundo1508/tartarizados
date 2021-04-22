@@ -52,7 +52,6 @@ if (!$items_origin) {
 
 $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
 
-
 //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
 $datosClientes = (object)$getDecodedVnvm->articulos;
 
@@ -135,9 +134,17 @@ if ($getSku) {
                 'id' => '9'
             ],
         ],
-        'images' => $images
+        'images' => [
+            [
+            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
+            ],
+            [
+            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
+            ]
+        ]        
+        //'images' => $images
     ];
-
+    
     $resultCreate = $woocommerce->post('products',  $data);
 
     if (!$resultCreate) {
