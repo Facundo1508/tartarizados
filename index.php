@@ -79,7 +79,7 @@
     </h1>
     <form name="formulario" method="post" action="OrdersVnvmToWoo.php" >
         <input type="text" name="id" value="" placeholder="Id clientes" disabled>
-        <input type="submit" / disabled>
+        <input type="submit" disabled/>
     </form>
     <br>
     <br>
@@ -103,8 +103,8 @@
         </h3>
     </h1>
     <form name="formulario" method="post" action="ProductsWooToVnvm.php">
-        <input type="text" name="id" value="" placeholder="Id productos">
-        <input type="submit" />
+        <input type="text" name="id" value="" placeholder="Id productos" disabled>
+        <input type="submit" disabled/>
     </form>
 
     <!-- ORDERS WOOTOVNVM-->
