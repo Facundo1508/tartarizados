@@ -78,8 +78,13 @@
         </h3>
     </h1>
     <form name="formulario" method="post" action="OrdersVnvmToWoo.php" >
+<<<<<<< HEAD
         <input type="text" name="mail" value="" placeholder="Mail de clientes" disabled>
         <input type="submit" / disabled>
+=======
+        <input type="text" name="id" value="" placeholder="Id clientes" disabled>
+        <input type="submit" disabled/>
+>>>>>>> 856e5a17dc84bd01d09c69e7c06c810ae6fd0422
     </form>
     <br>
     <br>
@@ -103,8 +108,8 @@
         </h3>
     </h1>
     <form name="formulario" method="post" action="ProductsWooToVnvm.php">
-        <input type="text" name="id" value="" placeholder="Id productos">
-        <input type="submit" />
+        <input type="text" name="id" value="" placeholder="Id productos" disabled>
+        <input type="submit" disabled/>
     </form>
 
     <!-- ORDERS WOOTOVNVM-->
