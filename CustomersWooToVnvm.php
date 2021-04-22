@@ -1,45 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes Woocommerce a Vnvm</title>
+</head>
+<body>
 <?php
 
-header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '/vendor/autoload.php';
+    header('Content-type: text/html; charset=utf-8');
+    require __DIR__ . '/vendor/autoload.php';
 
-use Automattic\WooCommerce\Client;
+    use Automattic\WooCommerce\Client;
 
-// Conexión WooCommerce API destino
-// ================================
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+    // Conexión WooCommerce API destino
+    // ================================
+    $url_API_woo = 'https://pruebas.tartarizados.com/';
+    $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+    $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 
-$woocommerce = new Client(
-    $url_API_woo,
-    $ck_API_woo,
-    $cs_API_woo,
-    [
-        'version' => 'wc/v3',
-        'query_string_auth' => true,
-    ]
-);
-$id = $_POST['id'];
-$getClienteWoo = $woocommerce->get('customers/'.$id);
+    $woocommerce = new Client(
+        $url_API_woo,
+        $ck_API_woo,
+        $cs_API_woo,
+        [
+            'version' => 'wc/v3',
+            'query_string_auth' => true,
+        ]
+    );
 
-// $params = [
-//     'clave' => (string)$clave
-// ];
+    $id = $_POST['id'];
+    $getClienteWoo = $woocommerce->get('customers/'.$id);
+    // print_r($getClienteWoo);
+    // die;
 
-// $getClave = $woocommerce->get('customers', $params);
+        $objClientWoo = (object)$getClienteWoo;
 
-
-// if ($getClave) {
-    
-//     $idUpdate = $getClave[0]->id;
-//     exit('❗Ya existe el producto, clave = ' . $clave);
-
-// } else {
-
-$objClientWoo = (object)$getClienteWoo;
-
-    $billing = $objClientWoo->billing;
+        $billing = $objClientWoo->billing;
 
         $mail = $billing->email;
         $nombreFiscal = $billing -> first_name." ";$billing->last_name;
@@ -79,10 +77,16 @@ $objClientWoo = (object)$getClienteWoo;
         $items_origin = curl_exec($ch);
 
         if (! $items_origin) {
+
             echo("❗Error al actualizar clientes \n");
+
         } else {
             print("✔ Clientes actualizados correctamente \n");
         }
-        curl_close($ch);
+
+    curl_close($ch);
 
 ?>
+    
+</body>
+</html>
