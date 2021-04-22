@@ -78,7 +78,7 @@
         </h3>
     </h1>
     <form name="formulario" method="post" action="OrdersVnvmToWoo.php" >
-        <input type="text" name="id" value="" placeholder="Id clientes" disabled>
+        <input type="text" name="mail" value="" placeholder="Mail de clientes" disabled>
         <input type="submit" / disabled>
     </form>
     <br>

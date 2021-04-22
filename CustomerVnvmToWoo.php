@@ -22,11 +22,13 @@ $woocommerce = new Client(
 );
 // ================================
 // Conexión API VNVM pedazo de loro origen!!!!!! Esto tenemos que postear 
-// ===================
-$mail = "jose@artipas.es";
+// ================================
+
+$mail = $_POST['email'];
 $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|CLI|GET|" . $mail;
 
-
+print_r($url_API);
+die;
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url_API);
