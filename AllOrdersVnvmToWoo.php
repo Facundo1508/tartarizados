@@ -22,9 +22,13 @@ $woocommerce = new Client(
 );
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
-$desde = $_POST['desde'];
+$desde = (String)$_POST['desde'];
+$newDesde = date("d-m-Y", strtotime($desde));
+
 $hasta = $_POST['hasta'];
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|".$desde."|".$hasta;
+$newHasta = date("d-m-Y", strtotime($hasta));
+
+$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV_BUS|GET|500|1|0|0||".$newDesde."|".$newHasta;
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -34,6 +38,7 @@ curl_setopt($ch, CURLOPT_HEADER, 0);
 echo "➜ Obteniendo datos origen Vnvm ... \n";
 
 $items_origin = curl_exec($ch);
+
 
 curl_close($ch);
 

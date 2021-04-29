@@ -67,6 +67,23 @@
     <br>
     <br>
     <br>
+  <!-- ALL ORDERS VNVMTOWOO-->
+  <h1>
+        Migrar todos los Pedidos
+        <h3>
+            <small>
+                De vnvm a woocommerce
+            </small>
+        </h3>
+    </h1>
+
+    <form name="formulario" method="post" action="AllOrdersVnvmToWoo.php">
+        <input type="date" name="desde" value="">
+        <input type="date" name="hasta" value="">
+        <br>
+        <br>
+        <input type="submit" />
+    </form>
 
        <!-- CLIENTES VNVMTOWOO-->
        <h1>
