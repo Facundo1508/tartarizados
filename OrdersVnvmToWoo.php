@@ -52,8 +52,7 @@ if (!$items_origin) {
 
 $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
 
-print_r($items_origin);
-die;
+
 ?>
 <br>
 <?php
