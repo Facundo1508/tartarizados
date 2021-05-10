@@ -1,118 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedidos Vnvm a Woocommerce</title>
 </head>
+
 <body>
-<?php
-header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '/vendor/autoload.php';
+    <?php
+    header('Content-type: text/html; charset=utf-8');
+    require __DIR__ . '/vendor/autoload.php';
 
-use Automattic\WooCommerce\Client;
+    use Automattic\WooCommerce\Client;
 
-// Conexión WooCommerce API destino
-// ================================
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+    // Conexión WooCommerce API destino
+    // ================================
+    $url_API_woo = 'https://pruebas.tartarizados.com/';
+    $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+    $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 
-$woocommerce = new Client(
-    $url_API_woo,
-    $ck_API_woo,
-    $cs_API_woo,
-    [
-        'version' => 'wc/v3',
-        'query_string_auth' => true,        
-        'verify_ssl' => false
-    ]
-);
-// ================================
-// Conexión API VNVM pedazo de loro origen!!!!!! Esto tenemos que postear 
-// ===================
-$id = $_POST['id'];
-$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|jose@artipas.es|119|9|08-04-2021";
+    $woocommerce = new Client(
+        $url_API_woo,
+        $ck_API_woo,
+        $cs_API_woo,
+        [
+            'version' => 'wc/v3',
+            'query_string_auth' => true,
+            'verify_ssl' => false
+        ]
+    );
+    // ================================
+    // Conexión API VNVM pedazo de loro origen!!!!!! Esto tenemos que postear 
+    // ===================
+    $id = $_POST['id'];
+    $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|info@olive-rueda.com|119|978|12-04-2021";
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_URL, $url_API);
-curl_setopt($ch, CURLOPT_HEADER, 0);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_URL, $url_API);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
 
-echo "➜ Obteniendo datos origen Vnvm ... \n";
-$items_origin = curl_exec($ch);
-// print_r($woocommerce->get('orders'));
-// die;
-curl_close($ch);
+    echo "➜ Obteniendo datos origen Vnvm ... \n";
+    $items_origin = curl_exec($ch);
+    // print_r($woocommerce->get('orders'));
+    // die;
+    curl_close($ch);
 
-if (!$items_origin) {
-    exit('❗Error en API origen');
-}
+    if (!$items_origin) {
+        exit('❗Error en API origen');
+    }
+    $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
 
-$getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
+    //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
+    $datosClientes = (object)$getDecodedVnvm->pedidos;
 
 
-?>
-<br>
-<?php
- 
-    $data = [
-        'parent_id'=>'120',
-        'payment_method' => $obj->formaPago,
-        'payment_method_title' => 'Direct Bank Transfer',
-        'set_paid' => true,
-        'billing' => [
-            'first_name' => $obj->nombre,
-            'last_name' =>  $obj->nombre,
-            'address_1' => $obj->direccion,
-            'address_2' => $obj->direccion,
-            'city' => $obj->localidad,
-            'state' =>$obj->provincia,
-            'postcode' => $obj->codigoPostal,
-            'country' => $obj->pais->siglas,
-            'email' => $obj->email,
-            'phone' => '-'
-        ],
-        'shipping' => [
-            'first_name' => $obj->nombre,
-            'last_name' => $obj->nombre,
-            'address_1' => $obj->direccion,
-            'address_2' => '',
-            'city' => $obj->localidad,
-            'state' => $obj->provincia,
-            'postcode' =>$obj->codigoPostal,
-            'country' => $obj->pais->siglas
-        ],
-        'line_items' => [
-            [
-                'sku' =>  $obj->refArticulo,
-                'quantity' => 2
-            ],
-            [
-                'sku' => 22,
-                'variation_id' => 23,
-                'quantity' => 1
-            ]
-        ],
-        'shipping_lines' => [
-            [
+    $registros = $datosClientes->registros;
+
+    foreach ($registros as $registros) {
+
+        $obj = $registros->direccionEnvio;
+        $objDetPed = $registros->detallePedido;
+
+        foreach ($objDetPed as $key => $value) {
+
+            $line_items[$key] = [
+                'sku' =>  $value->refArticulo,
+                'quantity' => $value->cantPedida
+            ];
+        }
+
+        foreach ($objDetPed as $key1 => $value1) {
+
+            $shipping_lines[$key1] = [
                 'method_id' => 'flat_rate',
                 'method_title' => 'Flat Rate',
-                'total' => '10.00'
-            ]
-        ]
-    ];
+                'total' => $value1->precio <= 0 ? '0.00' : (string)$value1->precio
+            ];
+        }
+
+        $data = [
+            //string id del metodo de pago
+            'payment_method' => "bacs",
+            'payment_method_title' => 'Direct Bank Transfer',
+            'set_paid' => true,
+            'billing' => [
+                'first_name' => $obj->nombre,
+                'last_name' =>  $obj->nombre,
+                'address_1' => $obj->direccion,
+                'address_2' => $obj->direccion,
+                'city' => $obj->localidad,
+                'state' => $obj->provincia,
+                'postcode' => $obj->codigoPostal,
+                'country' => $obj->pais->siglas,
+                'email' => $registros->cliente->email,
+                'phone' => '-'
+            ],
+            'shipping' => [
+                'first_name' => $obj->nombre,
+                'last_name' => $obj->nombre,
+                'address_1' => $obj->direccion,
+                'address_2' => $obj->direccion,
+                'city' => $obj->localidad,
+                'state' => $obj->provincia,
+                'postcode' => $obj->codigoPostal,
+                'country' => $obj->pais->siglas
+            ],
+
+            'line_items' => $line_items,
+
+            'shipping_lines' => $shipping_lines
+        ];
 
 
-$result = $woocommerce->post('orders',  $data);
+        $result = $woocommerce->post('orders',  $data);
 
-if (!$result) {
-    echo ("❗Error al actualizar productos \n");
-} else {
-    print("✔ Productos actualizados correctamente \n");
-}
-?>
-    
+        if (!$result) {
+            echo ("❗Error al actualizar Pedido \n");
+        } else {
+            print("✔ Pedido actualizados correctamente \n");
+        }
+    }
+    ?>
+
 </body>
+
 </html>

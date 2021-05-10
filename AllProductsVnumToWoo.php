@@ -55,7 +55,7 @@ curl_close($ch);
     $int=0;
     foreach($registros as $registros) {
 
-        $sku = $registros->id;
+        $sku = $registros->{'N/Ref'}; 
         //Este es el objeto que trae Woocommerce, por el sku. Si existe el objeto termina la ejecucion 
         $params = [
             'sku' => (string)$sku
@@ -76,45 +76,56 @@ curl_close($ch);
             // print_r($registros[0]);
             // die;
         
-            $imgVisd = $registros[0]->imagenes;
+            $imgVisd = $registros[$int]->imagenes;
             // print_r($imgVisd[0]->visd);
             // die;
         
-            foreach ($imgVisd as $key => $value) {
-                
-                $images[$key] = [ 
-                    'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
-                ];
-            }
+            if(empty($imgVisd) || is_null($imgVisd)){
         
-            $catFamilia = $registros[0]->familia;
+                $images[] = [ 
+                        
+                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg',
+                ];              
+                        
+            }else{
+                
+                foreach ($imgVisd as $key => $value) {
+                    
+                    $images[$key] = [ 
+                        
+                        'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
+                    ];
+                }
+            };    
+        
+            $catFamilia = $registros[$int]->familia;
             $familia = [];
             foreach ($catFamilia as $key1 => $value1) {
                            
                 $familia[$key1] = $value1;         
                 
                 $data = [
-                    'name' => $registros[0]->nombre,
+                    'name' => empty($registros[$int]->nombreAlternativo) || is_null($registros[$int]->nombreAlternativo)  ? $registros[$int]->nombre : $registros[$int]->nombreAlternativo ,
                     // Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
                     'type' => 'simple',
-                    'regular_price' =>  (string)$registros[0]->{'tarifa-1'}->precio,
-                    'description' => $registros[0]->catalogo,
-                    'short_description' => $registros[0]->metaDescripcion,
+                    'regular_price' =>  (string)$registros[$int]->{'tarifa-9'}->precio,
+                    'description' => $registros[$int]->catalogo,
+                    'short_description' => $registros[$int]->metaDescripcion,
                     'sku' => (string)$sku,
                     'dimensions' => [
             
-                        'length' => (string)$registros[0]-> largo,
-                        'width' => (string)$registros[0]-> ancho,
-                        'height' => (string)$registros[0]-> alto
+                        'length' => (string)$registros[$int]-> largo,
+                        'width' => (string)$registros[$int]-> ancho,
+                        'height' => (string)$registros[$int]-> alto
                     ],
                     
-                    'stock_quantity' => $registros[0]->existencias->existencias,
+                    'stock_quantity' => $registros[$int]->existencias->existencias,
                     //stock_status Options: instock, outofstock, onbackorder. Default is instock.
                     //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
                     'stock_status' =>'instock',
                     //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
                     'catalog_visibility' => 'visible',
-                    'sale_price' => (string)$registros[0]->oferta,
+                    'sale_price' => (string)$registros[$int]->oferta,
                     //esto es un boolean por defecto false
                     //'featured' => false,
                     // 'date_on_sale_from' =>null,
@@ -125,18 +136,12 @@ curl_close($ch);
                             'id' => '9'
                         ],
                     ],
-                    'images' => [
-                        [
-                            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-                        ],
-                        [
-                            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
-                        ]
-                    ]
+                    'images' => $images
 
                     //'images' => $images
                 ];
             }
+            
             $resultCreate = $woocommerce->post('products',  $data);
         
             if (!$resultCreate) {
@@ -145,6 +150,8 @@ curl_close($ch);
                 print("✔ Productos actualizados correctamente \n <br>");
                 print_r($resultCreate);
             }
+         
+            $int++;
         }
       
     }

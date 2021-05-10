@@ -62,7 +62,7 @@ if( $datosClientes->totalRegistros <= 0 ){
     exit();
 }
 
-$sku = $registros[0]->id;
+$sku = $registros[0]->{'N/Ref'}; 
 
 //Este es el objeto que trae Woocommerce, por el sku. Si existe el objeto termina la ejecucion 
 $params = [
@@ -86,14 +86,24 @@ if ($getSku) {
     $imgVisd = $registros[0]->imagenes;
     // print_r($imgVisd[0]->visd);
     // die;
-
-    foreach ($imgVisd as $key => $value) {
+    if(empty($imgVisd) || is_null($imgVisd)){
         
-        $images[$key] = [ 
-            'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
-        ];
-    }
-
+        $images[] = [ 
+                
+            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg',
+        ];              
+                
+    }else{
+        
+        foreach ($imgVisd as $key => $value) {
+            
+            $images[$key] = [ 
+                
+                'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
+            ];
+        }
+    };    
+        
     $catFamilia = $registros[0]->familia;
     $familia = [];
     foreach ($catFamilia as $key1 => $value1) {
@@ -101,11 +111,12 @@ if ($getSku) {
         $familia[$key1] = $value1;         
       
     }
-    $data = [
-        'name' => $registros[0]->nombre,
+
+    $data = [        
+        'name' => empty($registros[0]->nombreAlternativo) || is_null($registros[0]->nombreAlternativo)  ? $registros[0]->nombre : $registros[0]->nombreAlternativo ,
         // Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
         'type' => 'simple',
-        'regular_price' =>  (string)$registros[0]->{'tarifa-1'}->precio,
+        'regular_price' =>  (string)$registros[0]->{'tarifa-9'}->precio,
         'description' => $registros[0]->catalogo,
         'short_description' => $registros[0]->metaDescripcion,
         'sku' => (string)$sku,
@@ -134,14 +145,16 @@ if ($getSku) {
                 'id' => '9'
             ],
         ],
-        'images' => [
-            [
-            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-            ],
-            [
-            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
-            ]
-        ]        
+        
+        'images' => $images
+        // 'images' => [
+        //     [
+        //     'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
+        //     ],
+        //     [
+        //     'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
+        //     ]
+        // ]        
         //'images' => $images
     ];
     
