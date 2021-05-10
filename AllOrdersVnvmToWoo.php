@@ -96,7 +96,7 @@ foreach ($registros as $registros) {
             'state' =>$obj->provincia,
             'postcode' => $obj->codigoPostal,
             'country' => $obj->pais->siglas,
-            'email' => $registros->cliente->email,
+            'email' => $registros->cliente->email === "" ? 'sinemail@sinemail.com' : $registros->cliente->email,
             'phone' => '-'
         ],
         'shipping' => [
@@ -114,9 +114,6 @@ foreach ($registros as $registros) {
 
         'shipping_lines' => $shipping_lines
     ];
-
-    // print_r($data);
-    // die;
     
     $result = $woocommerce->post('orders',  $data);
     
@@ -124,7 +121,5 @@ foreach ($registros as $registros) {
         echo ("❗Error al actualizar productos \n");
     } else {
         print("✔ Productos actualizados correctamente \n <br>");
-        print_r($result);
-        die;
     }
 }

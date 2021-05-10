@@ -34,8 +34,15 @@
     // ================================
     // Conexión API VNVM pedazo de loro origen!!!!!! Esto tenemos que postear 
     // ===================
-    $id = $_POST['id'];
-    $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|info@olive-rueda.com|119|978|12-04-2021";
+    $email = $_POST['email'];
+    $serie = $_POST['serie'];
+    $num = $_POST['num'];
+    $fch = $_POST['fch'];
+    $newfch = date("d-m-Y", strtotime($fch));
+    $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|$email|$serie|$num|$newfch";
+
+    // print_r($url_API);
+    // die;
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -120,7 +127,7 @@
         if (!$result) {
             echo ("❗Error al actualizar Pedido \n");
         } else {
-            print("✔ Pedido actualizados correctamente \n");
+            print("✔ Pedido actualizado correctamente \n");
         }
     }
     ?>

@@ -61,7 +61,10 @@
         </h3>
     </h1>
     <form name="formulario" method="post" action="OrdersVnvmToWoo.php">
-        <input type="text" name="id" value="" placeholder="Id pedidos">
+        <input type="email" name="email" value="" placeholder="Email">
+        <input type="number" name="serie" value="" placeholder="Serie">
+        <input type="number" name="num" value="" placeholder="Número de pedido">
+        <input type="date" name="fch" value="" placeholder="fecha">
         <input type="submit" />
     </form>
     <br>
