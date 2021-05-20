@@ -32,7 +32,7 @@ $woocommerce = new Client(
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
 $id = $_POST['id'];
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|.|.|".$id."|".$id;
+$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|.|.|".$id."|".$id;
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -53,8 +53,14 @@ if (!$items_origin) {
 
 $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
 
+//probar este decodificador
+//utf8_decode()
 //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
 $datosClientes = (object)$getDecodedVnvm->articulos;
+
+
+print_r($datosClientes);
+die;
 
 $registros = $datosClientes->registros;
 
