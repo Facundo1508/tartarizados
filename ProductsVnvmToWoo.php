@@ -118,23 +118,23 @@ if ($getSku) {
         // Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
         'type' => 'simple',
         'regular_price' =>  (string)$registros[0]->{'tarifa-9'}->precio,
-        'description' => $registros[0]->catalogo,
-        'short_description' => $registros[0]->metaDescripcion,
+        'description' => $registros[0]->catalogo === "" ? "sinDescripcion" : $registros[0]->catalogo,
+        'short_description' => $registros[0]->metaDescripcion === "" ? "sinDescripcion" : $registros[0]->metaDescripcion,
         'sku' => (string)$sku,
         'dimensions' => [
 
             'length' => (string)$registros[0]-> largo,
             'width' => (string)$registros[0]-> ancho,
-            'height' => (string)$registros[0]-> alto
+            'height' => (string)$registros[0]-> alto 
         ],
         
-        'stock_quantity' => $registros[0]->existencias->existencias,
+        'stock_quantity' => round($registros[0]->existencias->existencias),
         //stock_status Options: instock, outofstock, onbackorder. Default is instock.
         //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
         'stock_status' =>'instock',
         //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
         'catalog_visibility' => 'visible',
-        'sale_price' => (string)$registros[0]->oferta,
+        'sale_price' => (string)$registros[0]->oferta === "" ? "0" :  (string)$registros[0]->oferta,
         //esto es un boolean por defecto false
         //'featured' => false,
         // 'date_on_sale_from' =>null,

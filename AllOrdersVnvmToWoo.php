@@ -115,11 +115,13 @@ foreach ($registros as $registros) {
         'shipping_lines' => $shipping_lines
     ];
     
-    $result = $woocommerce->post('orders',  $data);
+    // $result = $woocommerce->post('orders',  $data);
     
-    if (!$result) {
-        echo ("❗Error al actualizar productos \n");
-    } else {
-        print("✔ Productos actualizados correctamente \n <br>");
-    }
+    // if (!$result) {
+    //     echo ("❗Error al actualizar pedidos \n");
+    // } else {
+    //     print("✔ Pedidos actualizados correctamente \n <br>");
+    // }
+
+    $int++;
 }

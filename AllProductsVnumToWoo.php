@@ -119,7 +119,7 @@ curl_close($ch);
                         'height' => (string)$registros[$int]-> alto
                     ],
                     
-                    'stock_quantity' => $registros[$int]->existencias->existencias,
+                    'stock_quantity' => round($registros[$int]->existencias->existencias),
                     //stock_status Options: instock, outofstock, onbackorder. Default is instock.
                     //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
                     'stock_status' =>'instock',
