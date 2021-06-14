@@ -32,7 +32,18 @@
         <input type="text" name="id" value="" placeholder="Id productos">
         <input type="submit" />
     </form>
-
+    <h1>
+        Upload Productos
+        <h3>
+            <small>
+                De vnvm a woocommerce
+            </small>
+        </h3>
+    </h1>
+    <form name="formulario" method="post" action="UploadProductsVnvmtoWoo.php">
+        <input type="text" name="id" value="" placeholder="Id productos">
+        <input type="submit" />
+    </form>
     <!-- ALL PRODUCTS VNVMTOWOO-->
     <h1>
         Migrar todos los Productos
