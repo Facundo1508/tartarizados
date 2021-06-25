@@ -35,10 +35,10 @@ $ListNref=$_POST['id'];
 $ListNrefObj= explode(",",$ListNref);
 
 foreach($ListNrefObj as $idVnvm){
-    
+   
     try{
 
-        $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|.|.|".trim($idVnvm)."|".trim($idVnvm);
+        $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|.|.|".$idVnvm."|".$idVnvm;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -58,13 +58,6 @@ foreach($ListNrefObj as $idVnvm){
         
         $getDecodedVnvm = json_decode(utf8_encode($items_origin));
         
-        if(is_null($getDecodedVnvm->articulos)){
-
-            echo "➜ no se encontro el articulo ... \n";
-            echo $idVnvm;
-            continue;
-
-        }
         $datosClientes = (object)$getDecodedVnvm->articulos;
 
         $registros = $datosClientes->registros;
@@ -72,28 +65,21 @@ foreach($ListNrefObj as $idVnvm){
         foreach($registros as $registros){
             $imagenes= array();
             $count=0;
-            // foreach($registros->imagenes as $imgVnvm ){
-                
-            //     if($count===0){
-
-            //         $img1='http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd;
-            //         // $imagenes[$count] = [ 
-                        
-            //         //     'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd,
-            //         // ];         
-            //     }else if($count===1){
-            //         $img2='http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd;
-            //     }
-                    
-            //     $count++;
-            // }
+            foreach($registros->imagenes as $imgVnvm ){
+    
+                $imagenes[$count] = [ 
+    
+                    'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$imgVnvm->visd,
+                ];         
+    
+                $count++;
+            }
             
             $concepto=empty($registros->concepto) || is_null($registros->concepto) ?"Sin Concepto": $registros->concepto ;
             $anchoDiametro= $registros->ancho=== 0 || empty($registros->ancho) ? $registros->diametro : $registros->ancho;
             $altura= $registros->alto;
             $unidadesCaja=$registros->unidadesCaja;
             $formatoVentaNombre= $registros->formatoVenta->nombre;
-
             $data = [        
                 'short_description' => '<div class="concepto_prod"> '.$concepto.'
                                         <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.' mm  <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.' mm
@@ -102,25 +88,16 @@ foreach($ListNrefObj as $idVnvm){
                                         <div></div>
                                         </div>',
                 'stock_quantity' => round($registros->existencias->existencias),
-                // 'images' => [
-                //     [
-                //         'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-                //     ],
-                //     [
-                //         'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
-                //     ] 
-                //     ]   
-                ];   
-                
-
-
+                'images' => $imagenes
+                 
+            ];           
             $sku=$registros->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [
                 'sku' => (string)$sku
             ];
             $getWooProducts = $woocommerce->get('products', $params);      
-            
+    
             $resultCreate = $woocommerce->put('products/'.$getWooProducts[0]->id, $data);
             
             if (!$resultCreate) {
@@ -129,14 +106,15 @@ foreach($ListNrefObj as $idVnvm){
                 $tiempoEjecucion=microtime(true);
                 print("✔ Producto ". $registros->{'N/Ref'}." actualizado correctamente \n <br>");            
             }
-            
+    
         }
-      
+        
     }
     catch(Exception $ex){
         echo($ex);
         continue;
-    }  
+    }
+
 }
 ?>
 

@@ -33,10 +33,10 @@
         <input type="submit" />
     </form>
     <h1>
-        Upload Productos
+        Update Productos
         <h3>
             <small>
-                De vnvm a woocommerce
+                Este actualizador recibe un N-Ref, o una cadena de N-ref separados por ",". </br> Ej: PS34537,BC3N,BC3T   
             </small>
         </h3>
     </h1>
@@ -61,6 +61,22 @@
         <br>
         <input type="submit" />
     </form>
+<!-- Actualizar Cantidades de Producto-->
+<h1>
+        Actualizar Cantidades de Producto
+        <h3>
+            <small>
+                De woocommerce a vnvm
+            </small>
+        </h3>
+    </h1>
+
+    <form name="formulario" method="post" action="UploadALL.php">        
+        <br>
+        <br>
+        <input type="submit"/>
+    </form>
+
 
     <!-- ORDERS VNVMTOWOO-->
     <h1>

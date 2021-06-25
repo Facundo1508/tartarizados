@@ -58,10 +58,8 @@ $getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_
 //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
 $datosClientes = (object)$getDecodedVnvm->articulos;
 
-
 print_r($datosClientes);
 die;
-
 $registros = $datosClientes->registros;
 
 if( $datosClientes->totalRegistros <= 0 ){
@@ -123,9 +121,16 @@ if ($getSku) {
         'name' => empty($registros[0]->nombreAlternativo) || is_null($registros[0]->nombreAlternativo)  ? $registros[0]->nombre : $registros[0]->nombreAlternativo ,
         // Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
         'type' => 'simple',
-        'regular_price' =>  (string)$registros[0]->{'tarifa-9'}->precio,
+        'regular_price' =>  "100",
         'description' => $registros[0]->catalogo === "" ? "sinDescripcion" : $registros[0]->catalogo,
-        'short_description' => $registros[0]->metaDescripcion === "" ? "sinDescripcion" : $registros[0]->metaDescripcion,
+
+        'short_description' => '"<div class="concepto_prod">Polietireno
+        <i class="fas fa-arrows-alt-h" aria-hidden="true">5mm</i> <i class="fas fa-arrows-alt-v" aria-hidden="true">10mm</i>
+        <i class="fas fa-box" aria-hidden="true">Caja 10u</i>
+        <div></div>
+        </div>"',
+
+
         'sku' => (string)$sku,
         'dimensions' => [
 
