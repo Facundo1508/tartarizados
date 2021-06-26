@@ -16,8 +16,11 @@ set_time_limit ( 0 );
 // Conexión WooCommerce API destino
 // ================================
 $url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -38,7 +41,7 @@ foreach($ListNrefObj as $idVnvm){
     
     try{
 
-        $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|.|.|".trim($idVnvm)."|".trim($idVnvm);
+        $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||".trim($idVnvm)."|".trim($idVnvm);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -58,7 +61,7 @@ foreach($ListNrefObj as $idVnvm){
         
         $getDecodedVnvm = json_decode(utf8_encode($items_origin));
         
-        if(is_null($getDecodedVnvm->articulos)){
+        if(is_null($getDecodedVnvm->articulos) || empty($getDecodedVnvm->articulos)){
 
             echo "➜ no se encontro el articulo ... \n";
             echo $idVnvm;
@@ -70,23 +73,24 @@ foreach($ListNrefObj as $idVnvm){
         $registros = $datosClientes->registros;
         
         foreach($registros as $registros){
+           
             $imagenes= array();
             $count=0;
-            // foreach($registros->imagenes as $imgVnvm ){
+            foreach($registros->imagenes as $imgVnvm ){
                 
-            //     if($count===0){
+                if($count===0){
 
-            //         $img1='http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd;
-            //         // $imagenes[$count] = [ 
+                    $img1='http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd;
+                    // $imagenes[$count] = [ 
                         
-            //         //     'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd,
-            //         // ];         
-            //     }else if($count===1){
-            //         $img2='http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd;
-            //     }
+                    //     'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd,
+                    // ];         
+                }else if($count===1){
+                    $img2='http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd;
+                }
                     
-            //     $count++;
-            // }
+                $count++;
+            }
             
             $concepto=empty($registros->concepto) || is_null($registros->concepto) ?"Sin Concepto": $registros->concepto ;
             $anchoDiametro= $registros->ancho=== 0 || empty($registros->ancho) ? $registros->diametro : $registros->ancho;
@@ -102,17 +106,15 @@ foreach($ListNrefObj as $idVnvm){
                                         <div></div>
                                         </div>',
                 'stock_quantity' => round($registros->existencias->existencias),
-                // 'images' => [
-                //     [
-                //         'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-                //     ],
-                //     [
-                //         'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
-                //     ] 
-                //     ]   
-                ];   
-                
-
+                'images' => [
+                    [
+                        'src' =>  $img1
+                    ],
+                    [
+                        'src' => $img2
+                    ] 
+                    ]   
+            ];             
 
             $sku=$registros->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 

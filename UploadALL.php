@@ -33,12 +33,8 @@ $woocommerce = new Client(
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
 //OBJETO DE PRODUCTOS EN WOOCOMERCE 
-$getWooProducts = $woocommerce->get('products');
-print_r(count($getWooProducts));
-print_r($getWooProducts);
-die;
 
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|5000|1|1|1|Publicable|0|5000";
+$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|9999||||Publicable||||";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -61,18 +57,23 @@ $getDecodedVnvm = json_decode(utf8_decode($items_origin));
 //probar este decodificador
 //utf8_decode()
 //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
+// if(is_null($getDecodedVnvm->articulos)){
+
+//     echo "➜ no se encontro articulos ... \n";
+//     echo $idVnvm;
+//     exit;
+
+// }
 $datosClientes = (object)$getDecodedVnvm->articulos;
 
 $registros = $datosClientes->registros;
 
 //OBJETO DE PRODUCTOS EN WOOCOMERCE 
 $getWooProducts = $woocommerce->get('products');
-
+echo count($getWooProducts);
 
 foreach ($getWooProducts as $KeyWoo) {
             
-    $encontrado=false;
-
     foreach($registros as $keyVnvm){
 
        
@@ -81,30 +82,32 @@ foreach ($getWooProducts as $KeyWoo) {
         $cantVnvm=round($keyVnvm->existencias->existencias);
         $cantWoo=$KeyWoo->stock_quantity;
 
-        if($cantVnvm !== $cantWoo){
+        //if($cantVnvm !== $cantWoo){
             echo("Producto encontrado");
             try{
 
             print_r("La N referencia ".$keyVnvm->{'N/Ref'}."\n");
             
-            print_r("Existencias en Woo: ".$KeyWoo->stock_quantity . "\n<br><br>");
-            
-            $concepto=empty($keyVnvm->concepto) || is_null($keyVnvm->concepto) ?"Sin Concepto": $keyVnvm->concepto ;
-            $anchoDiametro= $keyVnvm->ancho=== 0 || empty($keyVnvm->ancho) ? $keyVnvm->diametro : $keyVnvm->ancho;
-            $altura= $keyVnvm->alto;
-            $unidadesCaja=$keyVnvm->unidadesCaja;
-            $formatoVentaNombre= $keyVnvm->formatoVenta->nombre;
-
+            // print_r("Existencias en Woo: ".$KeyWoo->stock_quantity . "\n<br><br>");
+            print_r("Existencias en Woo: ".$keyVnvm[$int]->{'tarifa-9'}->precio . "\n<br><br>");
+           
+            // $concepto=empty($keyVnvm->concepto) || is_null($keyVnvm->concepto) ?"Sin Concepto": $keyVnvm->concepto ;
+            // $anchoDiametro= $keyVnvm->ancho=== 0 || empty($keyVnvm->ancho) ? $keyVnvm->diametro : $keyVnvm->ancho;
+            // $altura= $keyVnvm->alto;
+            // $unidadesCaja=$keyVnvm->unidadesCaja;
+            // $formatoVentaNombre= $keyVnvm->formatoVenta->nombre;
+                $price=(string)$keyVnvm[$int]->{'tarifa-9'}->precio;
             $data = [        
-                'short_description' => '<div class="concepto_prod"> '.$concepto.'
-                                        <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.' mm  <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.' mm
-                                        <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
-                                        Ref: ' .$keyVnvm->{'N/Ref'}.'
-                                        <div></div>
-                                        </div>',
+                'regular_price' => $price
+                // 'short_description' => '<div class="concepto_prod"> '.$concepto.'
+                //                         <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.' mm  <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.' mm
+                //                         <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
+                //                         Ref: ' .$keyVnvm->{'N/Ref'}.'
+                //                         <div></div>
+                //                         </div>',
 
-                'stock_quantity' => round($keyVnvm->existencias->existencias),
-                'images' => $imagenes
+                // 'stock_quantity' => round($keyVnvm->existencias->existencias),
+                // 'images' => $imagenes
                  
             ];           
             
@@ -113,16 +116,14 @@ foreach ($getWooProducts as $KeyWoo) {
             if (!$resultCreate) {
                 echo ("❗Error al actualizar productos ".$keyVnvm->{'N/Ref'}." \n");
             } else {
-                $tiempoEjecucion=microtime(true);
-                print("✔ Cantidad Actualizada correctamente En ".$tiempoEjecucion." seg. \n <br>");            
+                // $tiempoEjecucion=microtime(true);
+                print("✔ Cantidad Actualizada correctamente \n <br>");            
             }
-    
-            break;
             }catch(Exception $ex)
             {
                 echo("Error capturado: " .$ex);
             }
-        }  
+        //}  
 
 
       }
@@ -133,6 +134,7 @@ foreach ($getWooProducts as $KeyWoo) {
 $tiempoEjecucionEnd=microtime(true);
 echo(" Obtenidas en :".round($tiempoEjecucionEnd - $tiempoEjecucionStart,2)." segundos");       
 ?>
+
 
 </body>
 </html>
