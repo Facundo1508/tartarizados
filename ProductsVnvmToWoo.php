@@ -15,9 +15,12 @@ use Automattic\WooCommerce\Client;
 
 // Conexión WooCommerce API destino
 // ================================
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+$url_API_woo = 'https://tartarizados.com/';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -32,7 +35,7 @@ $woocommerce = new Client(
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
 $id = $_POST['id'];
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|10|1|1|1|Publicable|||".$id."|".$id;
+$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|1|1|1|1|Publicable|||".$id."|".$id;
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -51,15 +54,13 @@ if (!$items_origin) {
     exit('❗Error en API origen');
 }
 
-$getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
+$getDecodedVnvm = json_decode(utf8_encode($items_origin));
 
 //probar este decodificador
 //utf8_decode()
 //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
 $datosClientes = (object)$getDecodedVnvm->articulos;
 
-print_r($datosClientes);
-die;
 $registros = $datosClientes->registros;
 
 if( $datosClientes->totalRegistros <= 0 ){
@@ -117,18 +118,37 @@ if ($getSku) {
       
     }
 
+    $concepto=empty($registros[0]->concepto) || is_null($registros[0]->concepto) ?"Sin Concepto": $registros[0]->concepto ;
+    $anchoDiametro= $registros[0]->ancho=== 0 || empty($registros[0]->ancho) ? $registros[0]->diametro : $registros[0]->ancho;
+    $altura= $registros[0]->alto;
+    $unidadesCaja=$registros[0]->unidadesCaja;
+    $formatoVentaNombre= $registros[0]->formatoVenta->nombre;
+    if($registros[0]->publicable==='3'){
+
+        $visibilidad='visible';
+
+    }elseif($registros[0]->publicable==='N'){
+
+        $visibilidad='hidden';
+    }else{
+        $visibilidad='search';
+    };
+   
+
+
     $data = [        
+
         'name' => empty($registros[0]->nombreAlternativo) || is_null($registros[0]->nombreAlternativo)  ? $registros[0]->nombre : $registros[0]->nombreAlternativo ,
         // Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
         'type' => 'simple',
-        'regular_price' =>  "100",
-        'description' => $registros[0]->catalogo === "" ? "sinDescripcion" : $registros[0]->catalogo,
+        'regular_price' =>  (string)$registros[0]->{'tarifa-9'}->precio,
 
-        'short_description' => '"<div class="concepto_prod">Polietireno
-        <i class="fas fa-arrows-alt-h" aria-hidden="true">5mm</i> <i class="fas fa-arrows-alt-v" aria-hidden="true">10mm</i>
-        <i class="fas fa-box" aria-hidden="true">Caja 10u</i>
+        'short_description' => '<div class="concepto_prod"> '.$concepto.'
+        <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.' mm  <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.' mm
+        <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
+        Ref: ' .$registros[0]->{'N/Ref'}.'
         <div></div>
-        </div>"',
+        </div>',
 
 
         'sku' => (string)$sku,
@@ -144,31 +164,13 @@ if ($getSku) {
         //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
         'stock_status' =>'instock',
         //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
-        'catalog_visibility' => 'visible',
-        'sale_price' => (string)$registros[0]->oferta === "" ? "0" :  (string)$registros[0]->oferta,
-        //esto es un boolean por defecto false
-        //'featured' => false,
-        // 'date_on_sale_from' =>null,
-        // 'date_on_sale_to' => null,
-        
-        //para la categoria , la misma tiene que estar creada previamente en WOOCOMERCE y el id es numerico 
-        'categories' => [
-            [
-                'id' => '9'
-            ],
-        ],
+        'catalog_visibility' => $visibilidad,
         
         'images' => $images
-        // 'images' => [
-        //     [
-        //     'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-        //     ],
-        //     [
-        //     'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
-        //     ]
-        // ]        
-        //'images' => $images
+       
     ];
+    
+   
     
     $resultCreate = $woocommerce->post('products',  $data);
 

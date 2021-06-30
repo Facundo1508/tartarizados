@@ -15,7 +15,7 @@ use Automattic\WooCommerce\Client;
 set_time_limit ( 0 );
 // Conexión WooCommerce API destino
 // ================================
-$url_API_woo = 'https://pruebas.tartarizados.com/';
+$url_API_woo = 'https://tartarizados.com/';
 // $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
 // $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 

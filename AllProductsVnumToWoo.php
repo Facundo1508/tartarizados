@@ -5,9 +5,12 @@ use Automattic\WooCommerce\Client;
 
 // Conexión WooCommerce API destino
 // ================================
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+$url_API_woo = 'https://tartarizados.com/';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -120,16 +123,11 @@ curl_close($ch);
                     ],
                     
                     'stock_quantity' => round($registros[$int]->existencias->existencias),
-                    //stock_status Options: instock, outofstock, onbackorder. Default is instock.
-                    //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
                     'stock_status' =>'instock',
                     //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
                     'catalog_visibility' => 'visible',
                     'sale_price' => (string)$registros[$int]->oferta,
-                    //esto es un boolean por defecto false
-                    //'featured' => false,
-                    // 'date_on_sale_from' =>null,
-                    // 'date_on_sale_to' => null,
+                  
                     //para la categoria , la misma tiene que estar creada previamente en WOOCOMERCE y el id es numerico 
                     'categories' => [
                         [
