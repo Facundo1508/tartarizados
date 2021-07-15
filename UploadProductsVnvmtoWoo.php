@@ -77,17 +77,12 @@ foreach($ListNrefObj as $idVnvm){
             $imagenes= array();
             $count=0;
             foreach($registros->imagenes as $imgVnvm ){
-                
-                if($count===0){
 
-                    $img1='http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd;
-                    // $imagenes[$count] = [ 
+                 $imagenes[$count] = [ 
                         
-                    //     'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd,
-                    // ];         
-                }else if($count===1){
-                    $img2='http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd;
-                }
+                        'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd,
+                        'alt' => empty($registros->nombreAlternativo) || is_null($registros->nombreAlternativo)  ? $registros->nombre : $registros->nombreAlternativo
+                    ];                                   
                     
                 $count++;
             }
@@ -97,8 +92,10 @@ foreach($ListNrefObj as $idVnvm){
             $altura= $registros->alto;
             $unidadesCaja=$registros->unidadesCaja;
             $formatoVentaNombre= $registros->formatoVenta->nombre;
+            $precio =  (string)$registros->{'tarifa-9'}->precio;
 
-            $data = [        
+            $data = [  
+                'regular_price'=>$precio,      
                 'short_description' => '<div class="concepto_prod"> '.$concepto.'
                                         <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.' mm  <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.' mm
                                         <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
@@ -106,16 +103,10 @@ foreach($ListNrefObj as $idVnvm){
                                         <div></div>
                                         </div>',
                 'stock_quantity' => round($registros->existencias->existencias),
-                'images' => [
-                    [
-                        'src' =>  $img1
-                    ],
-                    [
-                        'src' => $img2
-                    ] 
-                    ]   
-            ];             
-
+                'images' => $imagenes
+            ];            
+          
+            
             $sku=$registros->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [

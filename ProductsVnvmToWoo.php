@@ -106,6 +106,7 @@ if ($getSku) {
             $images[$key] = [ 
                 
                 'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
+                'alt' => empty($registros[0]->nombreAlternativo) || is_null($registros[0]->nombreAlternativo)  ? $registros[0]->nombre : $registros[0]->nombreAlternativo
             ];
         }
     };    

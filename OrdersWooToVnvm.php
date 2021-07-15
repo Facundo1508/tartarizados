@@ -16,9 +16,12 @@ use Automattic\WooCommerce\Client;
 
 // Conexión WooCommerce API destino
 // ================================
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+$url_API_woo = 'https://tartarizados.com/';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -30,26 +33,9 @@ $woocommerce = new Client(
     ]
 );
 $id = $_POST['id'];
-// print_r('orders/'.$id);
-// die;
+
 $getPedidosWoo = $woocommerce->get('orders/'.$id);
 
-//  print_r($getPedidosWoo);
-//  die;
-
-// $params = [
-//     'clave' => (string)$clave
-// ];
-
-// $getClave = $woocommerce->get('customers', $params);
-
-
-// if ($getClave) {
-    
-//     $idUpdate = $getClave[0]->id;
-//     exit('❗Ya existe el producto, clave = ' . $clave);
-
-// } else {
 
 $objOrderWoo = (object)$getPedidosWoo;
 
@@ -113,19 +99,6 @@ $objOrderWoo = (object)$getPedidosWoo;
             
         }
 
-        // print_r($mail ."\n". $numero."\n");
-        // print_r($serie ."\n". $fecha."\n");
-        // print_r($suRef ."\n". $nombreFiscal."\n");
-        // print_r($telefono ."\n". $direccion."\n");
-        // print_r($codPostal ."\n". $localidad."\n");
-        // print_r($pais ."\n". $observacionesEnvio."\n");
-        // print_r($observaciones ."\n". $codFormaPago."\n");
-        // print_r($confirmado ."\n");
-        // print_r($line_items);
-        // die;
-        
-   
-        
         $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST|".$mail;"|".$numero;"|".$serie;"|".$fecha;"|".$suRef;"|".$nombreFiscal;"|".$telefono;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$observacionesEnvio;"|".$observaciones;"|".$codFormaPago;"|".$confirmado;"|".$salidaCompleta;
 
         $ch = curl_init();
