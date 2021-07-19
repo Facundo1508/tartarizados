@@ -15,12 +15,14 @@ use Automattic\WooCommerce\Client;
 set_time_limit ( 0 );
 // Conexión WooCommerce API destino
 // ================================
-$url_API_woo = 'https://tartarizados.com/';
-// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
-
-$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
-$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
+//PRUEBAS
+$url_API_woo = 'https://pruebas.tartarizados.com/';
+$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+//PRODUCCION
+// $url_API_woo = 'https://tartarizados.com/';
+// $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+// $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -96,12 +98,15 @@ foreach($ListNrefObj as $idVnvm){
 
             $data = [  
                 'regular_price'=>$precio,      
-                'short_description' => '<div class="concepto_prod"> '.$concepto.'
-                                        <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.' mm  <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.' mm
-                                        <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
-                                        Ref: ' .$registros->{'N/Ref'}.'
-                                        <div></div>
-                                        </div>',
+                'short_description' =>'<div class="concepto_prod">
+                <span class="span_concepto">'.$concepto.'</span>
+                <div class="div_icons">
+                <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.'  
+                <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.'
+                <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
+                </div>
+                <span class="span_referencia">Ref: ' .$registros->{'N/Ref'}.'</span>
+                </div>',
                 'stock_quantity' => round($registros->existencias->existencias),
                 'images' => $imagenes
             ];            

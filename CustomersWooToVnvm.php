@@ -14,11 +14,16 @@
 
     use Automattic\WooCommerce\Client;
 
-    // Conexión WooCommerce API destino
+   // Conexión WooCommerce API destino
     // ================================
+    //PRUEBAS
     $url_API_woo = 'https://pruebas.tartarizados.com/';
     $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
     $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+    //PRODUCCION
+    // $url_API_woo = 'https://tartarizados.com/';
+    // $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+    // $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
     $woocommerce = new Client(
         $url_API_woo,
