@@ -58,6 +58,7 @@ if (!$items_origin) {
 
 $getDecodedVnvm = json_decode(utf8_encode($items_origin));
 
+
 //probar este decodificador
 //utf8_decode()
 //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
@@ -88,17 +89,14 @@ if ($getSku) {
 } else {
     
     $registros = $datosClientes->registros;
-    // print_r($registros[0]);
-    // die;
-
+   
     $imgVisd = $registros[0]->imagenes;
-    // print_r($imgVisd[0]->visd);
-    // die;
+  
     if(empty($imgVisd) || is_null($imgVisd)){
         
         $images[] = [ 
                 
-            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg',
+            'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
         ];              
                 
     }else{
@@ -111,8 +109,35 @@ if ($getSku) {
                 'alt' => empty($registros[0]->nombreAlternativo) || is_null($registros[0]->nombreAlternativo)  ? $registros[0]->nombre : $registros[0]->nombreAlternativo
             ];
         }
-    };    
-        
+    };  
+
+    $arrayResul= [
+
+        'um_mayorista' =>
+        $arrayMayorista = [
+          'regular_price' => (string)$registros[0]->{'tarifa-9'}->precio,
+          'selling_price' => (string)$registros[0]->{'tarifa-2'}->precio,
+        ],
+     
+        'um_mayorista-pastelero' =>
+        $arrayMayoristaPast = [
+          'regular_price' => (string)$registros[0]->{'tarifa-6'}->precio,
+          'selling_price' => (string)$registros[0]->{'tarifa-3'}->precio,
+        ]
+     
+    ];
+
+    $meta[0] = [
+
+        'key'=>'_enable_role_based_price',
+        'value'=> '1'
+    ];
+    $meta[1] = [
+
+        'key'=>'_role_based_price ',
+        'value'=> serialize($arrayResul)
+    ];
+  
     $catFamilia = $registros[0]->familia;
     $familia = [];    foreach ($catFamilia as $key1 => $value1) {
                    
@@ -176,11 +201,10 @@ if ($getSku) {
         //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
         'catalog_visibility' => $visibilidad,
         
-        'images' => $images
+        'images' => $images,
+        'meta_data' => $meta
        
     ];
-    
-   
     
     $resultCreate = $woocommerce->post('products',  $data);
 

@@ -88,7 +88,33 @@ foreach($ListNrefObj as $idVnvm){
                     
                 $count++;
             }
-            
+            $arrayResul= [
+
+                'um_mayorista' =>
+                $arrayMayorista = [
+                  'regular_price' => (string)$registros->{'tarifa-9'}->precio,
+                  'selling_price' => (string)$registros->{'tarifa-2'}->precio,
+                ],
+             
+                'um_mayorista-pastelero' =>
+                $arrayMayoristaPast = [
+                  'regular_price' => (string)$registros->{'tarifa-6'}->precio,
+                  'selling_price' => (string)$registros->{'tarifa-3'}->precio,
+                ]
+             
+            ];
+        
+            $meta[0] = [
+        
+                'key'=>'_enable_role_based_price',
+                'value'=> '1'
+            ];
+            $meta[1] = [
+        
+                'key'=>'_role_based_price ',
+                'value'=> serialize($arrayResul)
+            ];
+
             $concepto=empty($registros->concepto) || is_null($registros->concepto) ?"Sin Concepto": $registros->concepto ;
             $anchoDiametro= $registros->ancho=== 0 || empty($registros->ancho) ? $registros->diametro : $registros->ancho;
             $altura= $registros->alto;
@@ -108,10 +134,12 @@ foreach($ListNrefObj as $idVnvm){
                 <span class="span_referencia">Ref: ' .$registros->{'N/Ref'}.'</span>
                 </div>',
                 'stock_quantity' => round($registros->existencias->existencias),
-                'images' => $imagenes
-            ];            
-          
-            
+                'images' => $imagenes,
+                'meta_data' => $meta
+
+            ];                    
+         
+
             $sku=$registros->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [
