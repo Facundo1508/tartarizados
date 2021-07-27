@@ -122,22 +122,43 @@ foreach($ListNrefObj as $idVnvm){
             $formatoVentaNombre= $registros->formatoVenta->nombre;
             $precio =  (string)$registros->{'tarifa-9'}->precio;
 
-            $data = [  
-                'regular_price'=>$precio,      
+            // $data = [  
+            //     'regular_price'=>$precio,      
+            //     'short_description' =>'<div class="concepto_prod">
+            //     <span class="span_concepto">'.$concepto.'</span>
+            //     <div class="div_icons">
+            //     <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.'  
+            //     <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.'
+            //     <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
+            //     </div>
+            //     <span class="span_referencia">Ref: ' .$registros->{'N/Ref'}.'</span>
+            //     </div>',
+            //     'stock_quantity' => round($registros->existencias->existencias),
+            //     'images' => $imagenes,
+            //     'meta_data' => $meta
+
+            // ];          
+            $data = [
+                'regular_price'=>$precio,
                 'short_description' =>'<div class="concepto_prod">
-                <span class="span_concepto">'.$concepto.'</span>
+                <div class="span_concepto">'.$concepto.'</div>
+                <div class="sku-prod">Ref: '
+                    .$registros->{'N/Ref'}.'</div>
                 <div class="div_icons">
-                <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.'  
-                <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.'
-                <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
+                <i class="fas fa-arrows-alt-h" aria-hidden="true"></i>
+                '.$anchoDiametro.'mm
+                <i class="fas fa-arrows-alt-v" aria-hidden="true"></i>
+                '.$altura.'mm
                 </div>
-                <span class="span_referencia">Ref: ' .$registros->{'N/Ref'}.'</span>
+                <div class="caja"><i class="fas fa-box"
+                aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
+                </div>
                 </div>',
-                'stock_quantity' => round($registros->existencias->existencias),
+                'stock_quantity' =>round($registros->existencias->existencias),
                 'images' => $imagenes,
                 'meta_data' => $meta
 
-            ];                    
+            ];          
          
 
             $sku=$registros->{'N/Ref'};
