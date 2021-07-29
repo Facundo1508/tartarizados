@@ -88,21 +88,27 @@ foreach($ListNrefObj as $idVnvm){
                     
                 $count++;
             }
-            $arrayResul= [
+            //um_mayorista
+                $precio9=$registros->{'tarifa-9'}->precio;
+                $precio2=$registros->{'tarifa-2'}->precio;
+                //um_mayorista-pastelero
+                $precio6=$registros->{'tarifa-6'}->precio;
+                $precio3=$registros->{'tarifa-3'}->precio;
+            $resulMeta= 
+                array(
 
                 'um_mayorista' =>
-                $arrayMayorista = [
-                  'regular_price' => (string)$registros->{'tarifa-9'}->precio,
-                  'selling_price' => (string)$registros->{'tarifa-3'}->precio,
-                ],
-             
+                array(
+                'regular_price' => $precio9<= $precio2 ? $precio2 : $precio9,
+                'selling_price' => $precio2,
+                ),
+            
                 'um_mayorista-pastelero' =>
-                $arrayMayoristaPast = [
-                  'regular_price' => (string)$registros->{'tarifa-6'}->precio,
-                  'selling_price' => (string)$registros->{'tarifa-2'}->precio,
-                ]
-             
-            ];
+                array (
+                'regular_price' => $precio6 <= $precio3 ? $precio3 : $precio6,
+                'selling_price' => $precio3,
+            )
+            );
         
             $meta[0] = [
         
@@ -111,8 +117,8 @@ foreach($ListNrefObj as $idVnvm){
             ];
             $meta[1] = [
         
-                'key'=>'_role_based_price ',
-                'value'=> serialize(array($arrayResul))
+                'key'=>'_role_based_price',
+                'value'=> $resulMeta
             ];
 
             $concepto=empty($registros->concepto) || is_null($registros->concepto) ?"Sin Concepto": $registros->concepto ;
@@ -120,26 +126,11 @@ foreach($ListNrefObj as $idVnvm){
             $altura= $registros->alto;
             $unidadesCaja=$registros->unidadesCaja;
             $formatoVentaNombre= $registros->formatoVenta->nombre;
-            $precio =  (string)$registros->{'tarifa-9'}->precio;
+            $regular_price=$registros[0]->{'tarifa-9'}->precio <= 0 ?$registros[0]->{'tarifa-3'}->precio:$registros[0]->{'tarifa-9'}->precio;
 
-            // $data = [  
-            //     'regular_price'=>$precio,      
-            //     'short_description' =>'<div class="concepto_prod">
-            //     <span class="span_concepto">'.$concepto.'</span>
-            //     <div class="div_icons">
-            //     <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.'  
-            //     <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.'
-            //     <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
-            //     </div>
-            //     <span class="span_referencia">Ref: ' .$registros->{'N/Ref'}.'</span>
-            //     </div>',
-            //     'stock_quantity' => round($registros->existencias->existencias),
-            //     'images' => $imagenes,
-            //     'meta_data' => $meta
-
-            // ];          
+            
             $data = [
-                'regular_price'=>$precio,
+                'regular_price'=>$regular_price,
                 'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
                 <div class="sku-prod">Ref: '
