@@ -16,13 +16,13 @@ set_time_limit ( 0 );
 // Conexión WooCommerce API destino
 // ================================
 //PRUEBAS
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+// $url_API_woo = 'https://pruebas.tartarizados.com/';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 //PRODUCCION
-// $url_API_woo = 'https://tartarizados.com/';
-// $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
-// $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
+$url_API_woo = 'https://tartarizados.com/';
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -93,13 +93,13 @@ foreach($ListNrefObj as $idVnvm){
                 'um_mayorista' =>
                 $arrayMayorista = [
                   'regular_price' => (string)$registros->{'tarifa-9'}->precio,
-                  'selling_price' => (string)$registros->{'tarifa-2'}->precio,
+                  'selling_price' => (string)$registros->{'tarifa-3'}->precio,
                 ],
              
                 'um_mayorista-pastelero' =>
                 $arrayMayoristaPast = [
                   'regular_price' => (string)$registros->{'tarifa-6'}->precio,
-                  'selling_price' => (string)$registros->{'tarifa-3'}->precio,
+                  'selling_price' => (string)$registros->{'tarifa-2'}->precio,
                 ]
              
             ];
@@ -112,7 +112,7 @@ foreach($ListNrefObj as $idVnvm){
             $meta[1] = [
         
                 'key'=>'_role_based_price ',
-                'value'=> serialize($arrayResul)
+                'value'=> serialize(array($arrayResul))
             ];
 
             $concepto=empty($registros->concepto) || is_null($registros->concepto) ?"Sin Concepto": $registros->concepto ;
@@ -158,7 +158,7 @@ foreach($ListNrefObj as $idVnvm){
                 'images' => $imagenes,
                 'meta_data' => $meta
 
-            ];          
+            ];        
          
 
             $sku=$registros->{'N/Ref'};

@@ -34,10 +34,13 @@ $woocommerce = new Client(
         'query_string_auth' => true,
     ]
 );
-$id = $_POST['id'];
 
-$getPedidosWoo = $woocommerce->get('orders/'.$id);
+//$idOrder= $_GET["id"];
+$getPedidosWoo = $woocommerce->get('orders');
+// $getPedidosWoo = $woocommerce->get('orders/'.$idOrder);
 
+print_r($getPedidosWoo);
+die;
 
 $objOrderWoo = (object)$getPedidosWoo;
 

@@ -16,13 +16,13 @@ use Automattic\WooCommerce\Client;
 // Conexión WooCommerce API destino
 // ================================
 //PRUEBAS
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+// $url_API_woo = 'https://pruebas.tartarizados.com/';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 //PRODUCCION
-// $url_API_woo = 'https://tartarizados.com/';
-// $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
-// $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
+$url_API_woo = 'https://tartarizados.com/';
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -57,7 +57,6 @@ if (!$items_origin) {
 }
 
 $getDecodedVnvm = json_decode(utf8_encode($items_origin));
-
 
 //probar este decodificador
 //utf8_decode()
@@ -111,21 +110,28 @@ if ($getSku) {
         }
     };  
 
-    $arrayResul= [
+    //um_mayorista
+    $precio9=$registros[0]->{'tarifa-9'}->precio;
+    $precio2=$registros[0]->{'tarifa-2'}->precio;
+    //um_mayorista-pastelero
+    $precio6=$registros[0]->{'tarifa-6'}->precio;
+    $precio3=$registros[0]->{'tarifa-3'}->precio;
+
+   $resulMeta= 
+        array(
 
         'um_mayorista' =>
-        $arrayMayorista = [
-          'regular_price' => (string)$registros[0]->{'tarifa-9'}->precio,
-          'selling_price' => (string)$registros[0]->{'tarifa-2'}->precio,
-        ],
+        array(
+          'regular_price' => $precio9<= $precio2 ? $precio2 : $precio9,
+          'selling_price' => $precio2,
+        ),
      
         'um_mayorista-pastelero' =>
-        $arrayMayoristaPast = [
-          'regular_price' => (string)$registros[0]->{'tarifa-6'}->precio,
-          'selling_price' => (string)$registros[0]->{'tarifa-3'}->precio,
-        ]
-     
-    ];
+        array (
+          'regular_price' => $precio6 <= $precio3 ? $precio3 : $precio6,
+          'selling_price' => $precio3,
+    )
+    );
 
     $meta[0] = [
 
@@ -134,8 +140,8 @@ if ($getSku) {
     ];
     $meta[1] = [
 
-        'key'=>'_role_based_price ',
-        'value'=> serialize($arrayResul)
+        'key'=>'_role_based_price',
+        'value'=> $resulMeta
     ];
   
     $catFamilia = $registros[0]->familia;
@@ -161,21 +167,14 @@ if ($getSku) {
         $visibilidad='search';
     };
    
-
+    $regular_price=$registros[0]->{'tarifa-9'}->precio <= 0 ?$registros[0]->{'tarifa-2'}->precio:$registros[0]->{'tarifa-9'}->precio;
 
     $data = [        
 
         'name' => empty($registros[0]->nombreAlternativo) || is_null($registros[0]->nombreAlternativo)  ? $registros[0]->nombre : $registros[0]->nombreAlternativo ,
         //Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
         'type' => 'simple',
-        'regular_price' =>  (string)$registros[0]->{'tarifa-9'}->precio,
-        //concepto y referencia en un span y lo iconos en un div , y clases distintas para los span 
-        // 'short_description' => '<div class="concepto_prod"> '.$concepto.'
-        // <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.' mm  <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.' mm
-        // <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
-        // Ref: ' .$registros[0]->{'N/Ref'}.'
-        // <div></div>
-        // </div>',
+        'regular_price' => (string)$regular_price ,        
         'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
                 <div class="sku-prod">Ref: '
@@ -210,7 +209,7 @@ if ($getSku) {
         'meta_data' => $meta
        
     ];
-    
+   
     $resultCreate = $woocommerce->post('products',  $data);
 
     if (!$resultCreate) {
