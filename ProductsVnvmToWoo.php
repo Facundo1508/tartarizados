@@ -167,7 +167,7 @@ if ($getSku) {
         $visibilidad='search';
     };
    
-    $regular_price=$registros[0]->{'tarifa-9'}->precio <= 0 ?$registros[0]->{'tarifa-2'}->precio:$registros[0]->{'tarifa-9'}->precio;
+    $regular_price=$registros[0]->{'tarifa-9'}->precio <= 0 ?$registros[0]->{'tarifa-3'}->precio:$registros[0]->{'tarifa-9'}->precio;
 
     $data = [        
 
