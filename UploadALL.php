@@ -17,13 +17,13 @@ set_time_limit (0);
 // Conexión WooCommerce API destino
 // ================================
 //PRUEBAS
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+// $url_API_woo = 'https://pruebas.tartarizados.com/';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 //PRODUCCION
-// $url_API_woo = 'https://tartarizados.com/';
-// $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
-// $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
+$url_API_woo = 'https://tartarizados.com/';
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -39,7 +39,7 @@ $woocommerce = new Client(
 // ===========================================
 //OBJETO DE PRODUCTOS EN WOOCOMERCE 
 
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|9999||||Publicable||||";
+$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|5000||||Publicable";
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -59,17 +59,10 @@ if (!$items_origin) {
 
 //$getDecodedVnvm = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin));
 $getDecodedVnvm = json_decode(utf8_decode($items_origin));
-//probar este decodificador
-//utf8_decode()
-//Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
-// if(is_null($getDecodedVnvm->articulos)){
 
-//     echo "➜ no se encontro articulos ... \n";
-//     echo $idVnvm;
-//     exit;
-
-// }
 $datosClientes = (object)$getDecodedVnvm->articulos;
+
+print_r($datosClientes);
 
 $registros = $datosClientes->registros;
 
@@ -78,7 +71,7 @@ $getWooProducts = $woocommerce->get('products');
 echo count($getWooProducts);
 
 foreach ($getWooProducts as $KeyWoo) {
-            
+
     foreach($registros as $keyVnvm){
 
        
@@ -93,29 +86,21 @@ foreach ($getWooProducts as $KeyWoo) {
 
             print_r("La N referencia ".$keyVnvm->{'N/Ref'}."\n");
             
-            // print_r("Existencias en Woo: ".$KeyWoo->stock_quantity . "\n<br><br>");
-            print_r("Existencias en Woo: ".$keyVnvm[$int]->{'tarifa-9'}->precio . "\n<br><br>");
-           
-            // $concepto=empty($keyVnvm->concepto) || is_null($keyVnvm->concepto) ?"Sin Concepto": $keyVnvm->concepto ;
-            // $anchoDiametro= $keyVnvm->ancho=== 0 || empty($keyVnvm->ancho) ? $keyVnvm->diametro : $keyVnvm->ancho;
-            // $altura= $keyVnvm->alto;
-            // $unidadesCaja=$keyVnvm->unidadesCaja;
-            // $formatoVentaNombre= $keyVnvm->formatoVenta->nombre;
-                $price=(string)$keyVnvm[$int]->{'tarifa-9'}->precio;
-            $data = [        
-                'regular_price' => $price
-                // 'short_description' => '<div class="concepto_prod"> '.$concepto.'
-                //                         <i class="fas fa-arrows-alt-h" aria-hidden="true"></i> '.$anchoDiametro.' mm  <i class="fas fa-arrows-alt-v" aria-hidden="true"></i> '.$altura.' mm
-                //                         <i class="fas fa-box" aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
-                //                         Ref: ' .$keyVnvm->{'N/Ref'}.'
-                //                         <div></div>
-                //                         </div>',
-
-                // 'stock_quantity' => round($keyVnvm->existencias->existencias),
-                // 'images' => $imagenes
-                 
-            ];           
             
+            print_r("Existencias en Woo: ".$keyVnvm->{'tarifa-9'}->precio . "\n<br><br>");
+           
+          
+            $price=(string)$keyVnvm->{'tarifa-9'}->precio;
+            
+            $data = [        
+
+                'name' => empty($keyVnvm->nombreAlternativo) || is_null($keyVnvm->nombreAlternativo)  ? $keyVnvm->nombre : $keyVnvm->nombreAlternativo ,
+
+                'regular_price' => $price,
+
+                'stock_quantity' => round($keyVnvm->existencias->existencias),
+      
+            ];   
             $resultCreate = $woocommerce->put('products/'.$KeyWoo->id, $data);
             
             if (!$resultCreate) {
@@ -129,8 +114,6 @@ foreach ($getWooProducts as $KeyWoo) {
                 echo("Error capturado: " .$ex);
             }
         //}  
-
-
       }
     
     }

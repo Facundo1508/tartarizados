@@ -17,13 +17,13 @@ use Automattic\WooCommerce\Client;
 // Conexión WooCommerce API destino
 // ================================
 //PRUEBAS
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+// $url_API_woo = 'https://pruebas.tartarizados.com/';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 //PRODUCCION
-// $url_API_woo = 'https://tartarizados.com/';
-// $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
-// $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
+$url_API_woo = 'https://tartarizados.com/';
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -35,12 +35,9 @@ $woocommerce = new Client(
     ]
 );
 
-//$idOrder= $_GET["id"];
-$getPedidosWoo = $woocommerce->get('orders');
+$idOrder= $_GET["id"];
+$getPedidosWoo = $woocommerce->get('orders/'.$idOrder);
 // $getPedidosWoo = $woocommerce->get('orders/'.$idOrder);
-
-print_r($getPedidosWoo);
-die;
 
 $objOrderWoo = (object)$getPedidosWoo;
 
@@ -64,26 +61,22 @@ $objOrderWoo = (object)$getPedidosWoo;
         //se manda 0/1 por defecto al ser una lista de string y esto un booleano $objOrderWoo->status
         $confirmado = "1";
         
-        $line_items =(Array)[
-            [
-                'product_id' => 93,
-                'name' => "Loro",
-                'quantity' => 1,
-                'total' => 20
-            ],
-            [
-                'product_id' => 94,
-                'name' => "Loro1",
-                'quantity' => 2,
-                'total' => 25
-            ],
-            [
-                'product_id' => 95,
-                'name' => "Loro2",
-                'quantity' => 3,
-                'total' => 30
-            ]
-        ];
+        $articulosList = $objOrderWoo->line_items;
+  
+
+        foreach ($articulosList as $key => $value) {
+        
+        $articulos[$key] = [ 
+            
+                'product_id' => $value->sku,
+                'name' => $value->name,
+                'quantity' => $value->quantity,
+                'total' => $value->total
+            ];
+        }
+
+        
+        $line_items =(Array)$articulos;
 
         $salidaCompleta="";
         foreach($line_items as $valor) {

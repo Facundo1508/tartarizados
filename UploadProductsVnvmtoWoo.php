@@ -61,8 +61,6 @@ foreach($ListNrefObj as $idVnvm){
             exit('❗Error en API origen');
         }
         
-        $getDecodedVnvm = json_decode(utf8_encode($items_origin));
-        
         if(is_null($getDecodedVnvm->articulos) || empty($getDecodedVnvm->articulos)){
 
             echo "➜ no se encontro el articulo ... \n";
@@ -70,6 +68,9 @@ foreach($ListNrefObj as $idVnvm){
             continue;
 
         }
+
+        $getDecodedVnvm = json_decode(utf8_encode($items_origin));
+              
         $datosClientes = (object)$getDecodedVnvm->articulos;
 
         $registros = $datosClientes->registros;
@@ -121,16 +122,20 @@ foreach($ListNrefObj as $idVnvm){
                 'value'=> $resulMeta
             ];
 
+            $nameProd= empty($registros->nombreAlternativo) || is_null($registros->nombreAlternativo)  ? $registros->nombre : $registros->nombreAlternativo;
+
             $concepto=empty($registros->concepto) || is_null($registros->concepto) ?"Sin Concepto": $registros->concepto ;
             $anchoDiametro= $registros->ancho=== 0 || empty($registros->ancho) ? $registros->diametro : $registros->ancho;
             $altura= $registros->alto;
             $unidadesCaja=$registros->unidadesCaja;
             $formatoVentaNombre= $registros->formatoVenta->nombre;
-            $regular_price=$registros[0]->{'tarifa-9'}->precio <= 0 ?$registros[0]->{'tarifa-3'}->precio:$registros[0]->{'tarifa-9'}->precio;
+            $regular_price=$registros->{'tarifa-9'}->precio <= 0 ? $registros->{'tarifa-3'}->precio: $registros->{'tarifa-9'}->precio;
 
             
             $data = [
-                'regular_price'=>$regular_price,
+
+                'name'=>$nameProd,
+                'regular_price'=>(string)$regular_price,
                 'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
                 <div class="sku-prod">Ref: '
