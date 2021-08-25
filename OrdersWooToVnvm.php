@@ -34,36 +34,44 @@ $woocommerce = new Client(
         'query_string_auth' => true,
     ]
 );
+if($_POST){
 
-$idOrder= $_GET["id"];
+    $idOrder= $_POST['id'];
+    
+}else if($_GET){
+
+    $idOrder= $_GET["id"];
+
+}else{
+    echo("No se encontraron datos de entradas para generar el pedido.");
+}
+
 $getPedidosWoo = $woocommerce->get('orders/'.$idOrder);
-// $getPedidosWoo = $woocommerce->get('orders/'.$idOrder);
-
+$serie="120";
 $objOrderWoo = (object)$getPedidosWoo;
 
         $billing = $objOrderWoo->billing;
-
+        $shipping=$objOrderWoo->shipping;
         $mail = $billing->email;
         $numero = $objOrderWoo->number;
-        $serie = $objOrderWoo->parent_id;
-        $fecha = $objOrderWoo->date_created;
+        $serie = $serie;
+        $fecha =date("d-m-Y", strtotime($objOrderWoo->date_created));
         $suRef = $objOrderWoo->id;
         $nombreFiscal = $billing -> first_name." ";$billing->last_name;
         $nombreComercial = $billing -> company === "" ? "sinCompany" : $billing -> company;
-        $telefono = trim($billing->phone);
-        $direccion = $billing->address_1;
-        $codPostal = $billing->postcode;
-        $localidad = $billing->city;
-        $pais = $billing->country;
-        $observacionesEnvio = "hola";
-        $observaciones = "chau";
+        $telefono = empty($shipping->phone) || is_null($shipping->phone) ? trim($billing->phone) :trim($shipping->phone) ;
+        $direccion = empty($shipping->address_1) || is_null($shipping->address_1) ? $billing->address_1 : $shipping->address_1 ;
+        $codPostal = empty($shipping->postcode) || is_null($shipping->postcode) ? $billing->postcode : $shipping->postcode ;
+        $localidad = empty($shipping->city) || is_null($shipping->city) ? $billing->city : $shipping->city ;
+        $pais =empty($shipping->country) || is_null($shipping->country) ? $billing->country : $shipping->country ;
+        $observacionesEnvio = " ";
+        $observaciones = $objOrderWoo->customer_note;
         $codFormaPago = "CT3";
         //se manda 0/1 por defecto al ser una lista de string y esto un booleano $objOrderWoo->status
         $confirmado = "1";
         
         $articulosList = $objOrderWoo->line_items;
   
-
         foreach ($articulosList as $key => $value) {
         
         $articulos[$key] = [ 
@@ -84,7 +92,7 @@ $objOrderWoo = (object)$getPedidosWoo;
             $pv_det = "PV-DET";
 
             $refArticulo = $valor['product_id'];
-            $nombreArticulo = $valor['name'];
+            $nombreArticulo = preg_replace("/[^a-zA-Z0-9\_\-]+/", "", utf8_encode($valor['name']));
             $cantidadArticulo = $valor['quantity'];
             $precioArticulo = $valor['total'];
             $desc1 = "0";
@@ -97,23 +105,31 @@ $objOrderWoo = (object)$getPedidosWoo;
             
         }
 
-        $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST|".$mail;"|".$numero;"|".$serie;"|".$fecha;"|".$suRef;"|".$nombreFiscal;"|".$telefono;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$observacionesEnvio;"|".$observaciones;"|".$codFormaPago;"|".$confirmado;"|".$salidaCompleta;
+        // $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST|".$mail."|".$serie."|".$numero."|".$fecha."|".$suRef."|".$nombreFiscal."|".$telefono."|".$direccion."|".$codPostal."|".$localidad."|".$pais."|".$observacionesEnvio."|".$observaciones."|".$codFormaPago."|".$confirmado."|".$salidaCompleta;
+        $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST||".$serie."|".$numero."|".$fecha."|".$suRef."|".$nombreFiscal."|".$telefono."|".$direccion."|".$codPostal."|".$localidad."|".$pais."|".$observacionesEnvio."|".$observaciones."|".$codFormaPago."|".$confirmado."|".$salidaCompleta;
+        $url_API=trim($url_API,'|');
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url_API);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         
-        echo "➜ Cargando Cliente \n";
         $items_origin = curl_exec($ch);
 
-        if (! $items_origin) {
+        $objResponseVNVM = json_decode(utf8_encode($items_origin));
+             
+        if ($objResponseVNVM->operaciones->numeroErrores>0) {
+
             echo("❗Error al actualizar pedidos \n");
-        } else {
+            echo("Codigo Error: ".$objResponseVNVM->operaciones->transacciones[0]->codigoError."\n");
+            echo("Descripcion Error: ".$objResponseVNVM->operaciones->transacciones[0]->descripcionError."\n");
+
+        } else if($objResponseVNVM->operaciones->operacionesRealizadas>0){
+
             print("✔ Pedidos actualizados correctamente \n");
+
         }
         curl_close($ch);
-
 ?>
     
 </body>
