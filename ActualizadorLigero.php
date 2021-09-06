@@ -39,7 +39,6 @@ $paginaDesde=0;
 $paginaHasta=0;
 
 $paginaHasta=ContadorVnvm();
-
     
 while($paginaDesde!=$paginaHasta){
 
@@ -57,52 +56,101 @@ while($paginaDesde!=$paginaHasta){
 
     $registros = $datosClientes->registros;
 
-    foreach($registros as $keyVnvm){
+    foreach($registros as $registro){
        
-        $sku=$registro->{'N/Ref'};
-        //Este es el objeto que trae Woocommerce, por el sku. Si existe el objeto termina la ejecucion 
-        $params = [
-            'sku' => (string)$sku
-        ];
-
-        $getSku = $woocommerce->get('products', $params);
-        
-        if($getSku){
-        
-            $idUpdate = $getSku[0]->sku;
-            echo('❗Ya existe el producto, sku = ' . $sku);
-            continue;
-        }else{   
-            try{
+        try{
                 
-                $price=(string)$keyVnvm->{'tarifa-9'}->precio;
+            $price=(string)$registro->{'tarifa-9'}->precio;
+
+            switch ($registro->publicable) {                
+                case "N":
+                    $visibilidad="0";//N
+                    break;
+                case "1":
+                    $visibilidad="1";//B2B
+                    break;
+                case "2":
+                    $visibilidad="2";//B2C
+                    break;                
+                default:
+                    $visibilidad="3";//B2B y B2C
+            }; 
+
+            //um_mayorista
+            $precio9=$registro->{'tarifa-9'}->precio;
+            $precio2=$registro->{'tarifa-2'}->precio;
+            //um_mayorista-pastelero
+            $precio6=$registro->{'tarifa-6'}->precio;
+            $precio3=$registro->{'tarifa-3'}->precio;
+
+
+            $resulMeta= 
+            array(
+                'um_mayorista' =>
+                    array(
+                    'regular_price' => $precio9<= $precio2 ? $precio2 : $precio9,
+                    'selling_price' => $precio2,
+                    ),
                 
-                $data = [        
+                    'um_mayorista-pastelero' =>
+                    array (
+                    'regular_price' => $precio6 <= $precio3 ? $precio3 : $precio6,
+                    'selling_price' => $precio3,
+                    )
+            );
 
-                    'name' => empty($keyVnvm->nombreAlternativo) || is_null($keyVnvm->nombreAlternativo)  ? $keyVnvm->nombre : $keyVnvm->nombreAlternativo ,
+            $meta[0] = [
 
-                    'regular_price' => $price,
+                'key'=>'_enable_role_based_price',
+                'value'=> '1'
+            ];
+            $meta[1] = [
 
-                    'stock_quantity' => round($keyVnvm->existencias->existencias),
-        
-                ];   
-                $resultCreate = $woocommerce->put('products/'.$KeyWoo->id, $data);
-                
-                if (!$resultCreate) {
-                    echo ("❗Error al actualizar productos ".$keyVnvm->{'N/Ref'}." \n");
-                } else {
-                    // $tiempoEjecucion=microtime(true);
-                    print("✔ Cantidad Actualizada correctamente \n <br>");            
-                }
-                $paginaDesde++;
-            }catch(Exception $ex)
-            {
-                echo("Error capturado: " .$ex);
-                continue;
-                $paginaDesde++;
+                'key'=>'_role_based_price',
+                'value'=> $resulMeta
+            ];
+            $meta[2] = [
+
+                'key'=>'_visibilidad_publicable',
+                'value'=> $visibilidad
+            ];
+
+
+            $data = [  
+
+                'name' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo ,
+                'regular_price' => $price,
+                'stock_quantity' => round($registro->existencias->existencias),
+                'meta_data' => $meta
+            
+            ];   
+
+            $sku=$registro->{'N/Ref'};
+            //OBJETO DE PRODUCTOS EN WOOCOMERCE 
+            $params = [
+                'sku' => (string)$sku
+            ];
+            $getWooProducts = $woocommerce->get('products', $params);    
+
+            print_r($getWooProducts);
+            die;
+            $resultCreate = $woocommerce->put('products/'.$KeyWoo->id, $data);
+             
+            if (!$resultCreate) {
+                 echo ("❗Error al actualizar productos ".$registro->{'N/Ref'}." \n");
+            } else {
+                 // $tiempoEjecucion=microtime(true);
+                 print("✔ Cantidad Actualizada correctamente \n <br>");            
             }
+            
+
+        }catch(Exception $ex)
+        {
+            echo("Error capturado: " .$ex);           
         }
+       
     }
+        $paginaDesde++;
 }
 
 function ContadorVnvm(){

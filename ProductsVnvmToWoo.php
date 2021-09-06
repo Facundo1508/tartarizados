@@ -156,7 +156,7 @@ if ($getSku) {
     $altura= $registros[0]->alto;
     $unidadesCaja=$registros[0]->unidadesCaja;
     $formatoVentaNombre= $registros[0]->formatoVenta->nombre;
-    if($registros[0]->publicable==='3'){
+    if($registros[0]->publicable==='3'){//B2B y B2C
 
         $visibilidad='visible';
 
