@@ -59,156 +59,185 @@ while($paginaDesde!=$paginaHasta){
 
     foreach($registros as $registro){
 
-        
-        $sku=$registro->{'N/Ref'};
-        //Este es el objeto que trae Woocommerce, por el sku. Si existe el objeto termina la ejecucion 
-        $params = [
-            'sku' => (string)$sku
-        ];
+        try{
 
-        $getSku = $woocommerce->get('products', $params);
-        
-        if($getSku){
-        
-            $idUpdate = $getSku[0]->sku;
-            echo('❗Ya existe el producto, sku = ' . $sku);
-            continue;
-        }else {
-        
-            $imgVisd = $registro->imagenes;
-        
-            if(empty($imgVisd) || is_null($imgVisd)){
-                
-                $images[] = [ 
-                        
-                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-                ];              
-                        
-            }else{
-                
-                foreach ($imgVisd as $key => $value) {
-                    
-                    $images[$key] = [ 
-                        
-                        'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
-                        'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
-                    ];
-                }
-            };  
-        
-            //um_mayorista
-            $precio9=$registro->{'tarifa-9'}->precio;
-            $precio2=$registro->{'tarifa-2'}->precio;
-            //um_mayorista-pastelero
-            $precio6=$registro->{'tarifa-6'}->precio;
-            $precio3=$registro->{'tarifa-3'}->precio;
-        
-            $resulMeta= 
-                array(
-        
-                'um_mayorista' =>
-                array(
-                'regular_price' => $precio9<= $precio2 ? $precio2 : $precio9,
-                'selling_price' => $precio2,
-                ),
-            
-                'um_mayorista-pastelero' =>
-                array (
-                'regular_price' => $precio6 <= $precio3 ? $precio3 : $precio6,
-                'selling_price' => $precio3,
-            )
-            );
-        
-            $meta[0] = [
-        
-                'key'=>'_enable_role_based_price',
-                'value'=> '1'
+            $sku=$registro->{'N/Ref'};
+            //Este es el objeto que trae Woocommerce, por el sku. Si existe el objeto termina la ejecucion 
+            $params = [
+                'sku' => (string)$sku
             ];
-            $meta[1] = [
-        
-                'key'=>'_role_based_price',
-                'value'=> $resulMeta
-            ];
-        
-            $catFamilia = $registro->familia;
-            $familia = [];    foreach ($catFamilia as $key1 => $value1) {
-                        
-                $familia[$key1] = $value1;         
+
+            $getSku = $woocommerce->get('products', $params);
+
+            if($getSku){
             
-            }
-        
-            $concepto=empty($registro->concepto) || is_null($registro->concepto) ?"Sin Concepto": $registro->concepto ;
-            $anchoDiametro= $registro->ancho=== 0 || empty($registro->ancho) ? $registro->diametro : $registro->ancho;
-            $altura= $registro->alto;
-            $unidadesCaja=$registro->unidadesCaja;
-            $formatoVentaNombre= $registro->formatoVenta->nombre;
-            if($registro->publicable==='3'){
-        
-                $visibilidad='visible';
-        
-            }elseif($registro->publicable==='N'){
-        
-                $visibilidad='hidden';
-            }else{
-                $visibilidad='search';
-            };
-        
-            $regular_price=$registro->{'tarifa-9'}->precio <= 0 ?$registro->{'tarifa-3'}->precio:$registro->{'tarifa-9'}->precio;
-        
-            $data = [        
-        
-                'name' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo ,
-                //Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
-                'type' => 'simple',
-                'regular_price' => (string)$regular_price ,        
-                'short_description' =>'<div class="concepto_prod">
-                        <div class="span_concepto">'.$concepto.'</div>
-                        <div class="sku-prod">Ref: '
-                            .(string)$sku.'</div>
-                        <div class="div_icons">
-                        <i class="fas fa-arrows-alt-h" aria-hidden="true"></i>
-                        '.$anchoDiametro.'mm
-                        <i class="fas fa-arrows-alt-v" aria-hidden="true"></i>
-                        '.$altura.'mm
-                        </div>
-                        <div class="caja"><i class="fas fa-box"
-                        aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
-                        </div>
-                        </div>',
-        
-                'sku' => (string)$sku,
-                'dimensions' => [
-        
-                    'length' => (string)$registro-> largo,
-                    'width' => (string)$registro-> ancho,
-                    'height' => (string)$registro-> alto 
-                ],
-                
-                'stock_quantity' => round($registro->existencias->existencias),
-                //stock_status Options: instock, outofstock, onbackorder. Default is instock.
-                //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
-                'stock_status' =>'instock',
-                //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
-                'catalog_visibility' => $visibilidad,
-                
-                'images' => $images,
-                'meta_data' => $meta
-            
-            ];
-        
-            $resultCreate = $woocommerce->post('products',  $data);
-        
-            if (!$resultCreate) {
-                echo ("❗Error al actualizar productos \n");
+                $idUpdate = $getSku[0]->sku;
+                echo('❗Ya existe el producto, sku = ' . $sku);
                 continue;
-            } else {
-                print("✔ Productos actualizados correctamente \n <br>");
-                print_r($resultCreate);
+
+            }elseif($registro->publicable==='N'){
+
+                echo('❗El producto esta configurado como publicable N');
+                continue;
+
+            }else 
+            {
+            
+                $imgVisd = $registro->imagenes;
+            
+                if(empty($imgVisd) || is_null($imgVisd)){
+
+                    $images[] = [ 
+
+                        'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
+                    ];              
+
+                }else{
+
+                    foreach ($imgVisd as $key => $value) {
+
+                        $images[$key] = [ 
+
+                            'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
+                            'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
+                        ];
+                    }
+                };  
+            
+                switch ($registro->publicable) {                
+                    case "N":
+                        $visibilidad_publicable="0";//N
+                        break;
+                    case "1":
+                        $visibilidad_publicable="1";//B2B
+                        break;
+                    case "2":
+                        $visibilidad_publicable="2";//B2C
+                        break;                
+                    default:
+                        $visibilidad_publicable="3";//B2B y B2C
+                }; 
+                //um_mayorista
+                $precio9=$registro->{'tarifa-9'}->precio;
+                $precio2=$registro->{'tarifa-2'}->precio;
+                //um_mayorista-pastelero
+                $precio6=$registro->{'tarifa-6'}->precio;
+                $precio3=$registro->{'tarifa-3'}->precio;
+            
+                $resulMeta= 
+                    array(
+                    
+                    'um_mayorista' =>
+                    array(
+                    'regular_price' => $precio9<= $precio2 ? $precio2 : $precio9,
+                    'selling_price' => $precio2,
+                    ),
+                
+                    'um_mayorista-pastelero' =>
+                    array (
+                    'regular_price' => $precio6 <= $precio3 ? $precio3 : $precio6,
+                    'selling_price' => $precio3,
+                )
+                );
+            
+                $meta[0] = [
+
+                    'key'=>'_enable_role_based_price',
+                    'value'=> '1'
+                ];
+                $meta[1] = [
+
+                    'key'=>'_role_based_price',
+                    'value'=> $resulMeta
+                ];
+                $meta[2] = [
+
+                    'key'=>'_visibilidad_publicable',
+                    'value'=> $visibilidad_publicable
+                ];
+            
+                $catFamilia = $registro->familia;
+                $familia = [];    foreach ($catFamilia as $key1 => $value1) {
+
+                    $familia[$key1] = $value1;         
+                
+                }
+            
+                $concepto=empty($registro->concepto) || is_null($registro->concepto) ?"Sin Concepto": $registro->concepto ;
+                $anchoDiametro= $registro->ancho=== 0 || empty($registro->ancho) ? $registro->diametro : $registro->ancho;
+                $altura= $registro->alto;
+                $unidadesCaja=$registro->unidadesCaja;
+                $formatoVentaNombre= $registro->formatoVenta->nombre;
+                if($registro->publicable==='3'){
+                
+                    $visibilidad='visible';
+                
+                }elseif($registro->publicable==='N'){
+                
+                    $visibilidad='hidden';
+                }else{
+                    $visibilidad='search';
+                };
+            
+                $regular_price=$registro->{'tarifa-9'}->precio;
+                $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+                $data = [        
+                
+                    'name' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo ,
+                    //Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
+                    'type' => 'simple',
+                    'regular_price' => (string)$regular_price,
+                    'sale_price'=>(string)$sale_price,        
+                    'short_description' =>'<div class="concepto_prod">
+                            <div class="span_concepto">'.$concepto.'</div>
+                            <div class="sku-prod">Ref: '
+                                .(string)$sku.'</div>
+                            <div class="div_icons">
+                            <i class="fas fa-arrows-alt-h" aria-hidden="true"></i>
+                            '.$anchoDiametro.'mm
+                            <i class="fas fa-arrows-alt-v" aria-hidden="true"></i>
+                            '.$altura.'mm
+                            </div>
+                            <div class="caja"><i class="fas fa-box"
+                            aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
+                            </div>
+                            </div>',
+                    'backorders'=>'yes',
+                    'sku' => (string)$sku,
+                    'dimensions' => [
+                    
+                        'length' => (string)$registro-> largo,
+                        'width' => (string)$registro-> ancho,
+                        'height' => (string)$registro-> alto 
+                    ],
+
+                    'stock_quantity' => round($registro->existencias->existencias),
+                    //stock_status Options: instock, outofstock, onbackorder. Default is instock.
+                    //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
+                    'stock_status' =>'instock',
+                    //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
+                    'catalog_visibility' => $visibilidad,
+
+                    'images' => $images,
+                    'meta_data' => $meta
+                
+                ];
+            
+                $resultCreate = $woocommerce->post('products',  $data);
+            
+                if (!$resultCreate) {
+                    echo ("❗Error al actualizar producto: ".$registro->{'N/Ref'}."\n <br>");
+                } else {
+                    // $tiempoEjecucion=microtime(true);
+                    print("✔ producto Creado correctamente".$registro->{'N/Ref'}." \n <br>");            
+                }
             }
-            $paginaDesde++;
-        }
-        
+        }catch(Exception $ex)
+        {
+            echo("Error capturado: " .$ex);           
+        }        
     }
+    $paginaDesde++;
 }
 
 function ContadorVnvm(){

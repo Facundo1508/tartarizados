@@ -81,45 +81,61 @@ foreach($ListNrefObj as $idVnvm){
             $count=0;
             foreach($registros->imagenes as $imgVnvm ){
 
-                 $imagenes[$count] = [ 
-                        
+                 $imagenes[$count] = [                         
                         'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd,
                         'alt' => empty($registros->nombreAlternativo) || is_null($registros->nombreAlternativo)  ? $registros->nombre : $registros->nombreAlternativo
                     ];                                   
                     
                 $count++;
             }
-            //um_mayorista
-                $precio9=$registros->{'tarifa-9'}->precio;
-                $precio2=$registros->{'tarifa-2'}->precio;
-                //um_mayorista-pastelero
-                $precio6=$registros->{'tarifa-6'}->precio;
-                $precio3=$registros->{'tarifa-3'}->precio;
-            $resulMeta= 
-                array(
 
+            switch ($registros->publicable) {                
+                case "N":
+                    $visibilidad_publicable="0";//N
+                    break;
+                case "1":
+                    $visibilidad_publicable="1";//B2B
+                    break;
+                case "2":
+                    $visibilidad_publicable="2";//B2C
+                    break;                
+                default:
+                    $visibilidad_publicable="3";//B2B y B2C
+            }; 
+            //um_mayorista
+            $precio9=$registros->{'tarifa-9'}->precio;
+            $precio2=$registros->{'tarifa-2'}->precio;
+            //um_mayorista-pastelero
+            $precio6=$registros->{'tarifa-6'}->precio;
+            $precio3=$registros->{'tarifa-3'}->precio;
+            
+            $resulMeta=array(
                 'um_mayorista' =>
                 array(
                 'regular_price' => $precio9<= $precio2 ? $precio2 : $precio9,
                 'selling_price' => $precio2,
-                ),
-            
+                ),            
                 'um_mayorista-pastelero' =>
                 array (
                 'regular_price' => $precio6 <= $precio3 ? $precio3 : $precio6,
                 'selling_price' => $precio3,
-            )
+                )
             );
         
             $meta[0] = [
-        
+
                 'key'=>'_enable_role_based_price',
                 'value'=> '1'
             ];
             $meta[1] = [
-        
+
                 'key'=>'_role_based_price',
                 'value'=> $resulMeta
+            ];
+            $meta[2] = [
+
+                'key'=>'_visibilidad_publicable',
+                'value'=> $visibilidad_publicable
             ];
 
             $nameProd= empty($registros->nombreAlternativo) || is_null($registros->nombreAlternativo)  ? $registros->nombre : $registros->nombreAlternativo;
@@ -129,13 +145,15 @@ foreach($ListNrefObj as $idVnvm){
             $altura= $registros->alto;
             $unidadesCaja=$registros->unidadesCaja;
             $formatoVentaNombre= $registros->formatoVenta->nombre;
-            $regular_price=$registros->{'tarifa-9'}->precio <= 0 ? $registros->{'tarifa-3'}->precio: $registros->{'tarifa-9'}->precio;
 
-            
+            $regular_price=$registros->{'tarifa-9'}->precio;
+            //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
+            $sale_price=$registros->{'tarifa-8'}->precio <= 0 ? $registros->{'tarifa-9'}->precio: $registros->{'tarifa-8'}->precio;
             $data = [
 
                 'name'=>$nameProd,
                 'regular_price'=>(string)$regular_price,
+                'sale_price'=>(string)$sale_price,
                 'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
                 <div class="sku-prod">Ref: '

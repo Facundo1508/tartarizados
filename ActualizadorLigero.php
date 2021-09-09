@@ -16,13 +16,13 @@ set_time_limit (0);
 // Conexión WooCommerce API destino
 // ================================
 //PRUEBAS
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+// $url_API_woo = 'https://pruebas.tartarizados.com/';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 //PRODUCCION
-// $url_API_woo = 'https://tartarizados.com/';
-// $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
-// $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
+$url_API_woo = 'https://tartarizados.com/';
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -61,20 +61,33 @@ while($paginaDesde!=$paginaHasta){
         try{
                 
             $price=(string)$registro->{'tarifa-9'}->precio;
+            $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
 
             switch ($registro->publicable) {                
                 case "N":
-                    $visibilidad="0";//N
+                    $visibilidad_publicable="0";//N
                     break;
                 case "1":
-                    $visibilidad="1";//B2B
+                    $visibilidad_publicable="1";//B2B
                     break;
                 case "2":
-                    $visibilidad="2";//B2C
+                    $visibilidad_publicable="2";//B2C
                     break;                
                 default:
-                    $visibilidad="3";//B2B y B2C
+                    $visibilidad_publicable="3";//B2B y B2C
             }; 
+
+            if($registros[0]->publicable==='3'){//B2B y B2C
+
+                $visibilidad='visible';
+        
+            }elseif($registros[0]->publicable==='N'){
+        
+                $visibilidad='hidden';
+            }else{
+                $visibilidad='search';
+            };
+           
 
             //um_mayorista
             $precio9=$registro->{'tarifa-9'}->precio;
@@ -112,14 +125,16 @@ while($paginaDesde!=$paginaHasta){
             $meta[2] = [
 
                 'key'=>'_visibilidad_publicable',
-                'value'=> $visibilidad
+                'value'=> $visibilidad_publicable
             ];
 
 
             $data = [  
 
                 'name' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo ,
-                'regular_price' => $price,
+                'catalog_visibility'=>$visibilidad,
+                'regular_price' => (string)$price,
+                'sale_price'=>(string)$sale_price,
                 'stock_quantity' => round($registro->existencias->existencias),
                 'meta_data' => $meta
             
@@ -128,29 +143,34 @@ while($paginaDesde!=$paginaHasta){
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [
-                'sku' => (string)$sku
+                'sku' => (string)$sku              
             ];
             $getWooProducts = $woocommerce->get('products', $params);    
+           
+            if(is_null($getWooProducts) || empty($getWooProducts)){
 
-            print_r($getWooProducts);
-            die;
-            $resultCreate = $woocommerce->put('products/'.$KeyWoo->id, $data);
-             
-            if (!$resultCreate) {
-                 echo ("❗Error al actualizar productos ".$registro->{'N/Ref'}." \n");
-            } else {
-                 // $tiempoEjecucion=microtime(true);
-                 print("✔ Cantidad Actualizada correctamente \n <br>");            
-            }
+                echo ("❗Error al actualizar producto, no se encontro la referencia: ".$registro->{'N/Ref'}." \n");
+                continue;
+
+            }else{          
+
+                $resultCreate = $woocommerce->put('products/'.$getWooProducts[0]->id, $data);
+
+                if (!$resultCreate) {
+                    echo ("❗Error al actualizar producto: ".$registro->{'N/Ref'}."\n <br>");
+                } else {
+                    // $tiempoEjecucion=microtime(true);
+                    print("✔ producto Actualizado correctamente".$registro->{'N/Ref'}." \n <br>");            
+                }
+            }  
             
-
         }catch(Exception $ex)
         {
             echo("Error capturado: " .$ex);           
         }
        
     }
-        $paginaDesde++;
+    $paginaDesde++;
 }
 
 function ContadorVnvm(){
