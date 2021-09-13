@@ -44,6 +44,18 @@
         <input type="text" name="id" value="" placeholder="Id productos">
         <input type="submit" />
     </form>
+    <h1>
+        Update Productos por Familia
+        <h3>
+            <small>
+                Este actualizador recibe una familia. </br> Ej: JR0103
+            </small>
+        </h3>
+    </h1>
+    <form name="formulario" method="post" action="UpdateProductsByFamily.php">
+        <input type="text" name="familia" value="" placeholder="Id familia">
+        <input type="submit" />
+    </form>
     <!-- ALL PRODUCTS VNVMTOWOO-->
     <h1>
         Migrar todos los Productos

@@ -34,13 +34,10 @@ $woocommerce = new Client(
         'verify_ssl' => false
     ]
 );
-print_r(ListadoActualizar());
-die;
-//$ListNref=$_POST['familia'];
 
+$id = $_POST['familia'];
 
- 
-$ListNrefObj= explode(",",$ListNref);
+$ListNrefObj[]= ListadoActualizar($id);
  
 foreach($ListNrefObj as $idVnvm){
  
@@ -226,9 +223,9 @@ foreach($ListNrefObj as $idVnvm){
  
 <?php
 
-function ListadoActualizar(){
+function ListadoActualizar($id){
 
-$url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||JR0103|JR0103|';
+$url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.$id.'|'.$id.'|';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url_API);
