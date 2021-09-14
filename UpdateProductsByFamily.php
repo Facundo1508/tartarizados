@@ -38,12 +38,12 @@ $woocommerce = new Client(
 $id = $_POST['familia'];
 
 $ListNrefObj[]= ListadoActualizar($id);
- 
+$count=0;
 foreach($ListNrefObj as $idVnvm){
- 
+    
     try{
  
-        $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||JR0103|JR0103|";
+        $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.$idVnvm[$count].'|'.$idVnvm[$count].'|';
 	    //echo $url_API;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -61,8 +61,8 @@ foreach($ListNrefObj as $idVnvm){
             exit('❗Error en API origen');
         }
  
-	$getDecodedVnvm = json_decode(utf8_encode($items_origin));
-	//var_dump($getDecodedVnvm);
+        $getDecodedVnvm = json_decode(utf8_encode($items_origin));
+        //var_dump($getDecodedVnvm);
  
         if(is_null($getDecodedVnvm->articulos) || empty($getDecodedVnvm->articulos)){
  
@@ -212,10 +212,12 @@ foreach($ListNrefObj as $idVnvm){
             }
  
         }
+        $count++;
  
     }
     catch(Exception $ex){
         echo($ex);
+        $count++;
         continue;
     }  
 }
