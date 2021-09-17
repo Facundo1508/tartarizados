@@ -172,11 +172,17 @@ $woocommerce = new Client(
             $regular_price=$registros->{'tarifa-9'}->precio;
             //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
             $sale_price=$registros->{'tarifa-8'}->precio <= 0 ? $registros->{'tarifa-9'}->precio: $registros->{'tarifa-8'}->precio;
+
+            $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
+        
             $data = [
 
                 'name'=>$nameProd,
                 'regular_price'=>(string)$regular_price,
                 'sale_price'=>(string)$sale_price,
+                'manage_stock'=>'true',
+                'backorders_allow'=>'false',
+                'backorders'=>'no',
                 'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
                 <div class="sku-prod">Ref: '
@@ -192,6 +198,7 @@ $woocommerce = new Client(
                 </div>
                 </div>',
                 'stock_quantity' =>round($registros->existencias->existencias),
+                'stock_status' => $stock_status,
                 'images' => $imagenes,
                 'meta_data' => $meta
 

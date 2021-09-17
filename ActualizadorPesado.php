@@ -181,13 +181,18 @@ while($paginaDesde!=$paginaHasta){
             
                 $regular_price=$registro->{'tarifa-9'}->precio;
                 $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+                $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
+                
                 $data = [        
                 
                     'name' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo ,
                     //Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
                     'type' => 'simple',
                     'regular_price' => (string)$regular_price,
-                    'sale_price'=>(string)$sale_price,        
+                    'sale_price'=>(string)$sale_price,  
+                    'manage_stock'=>'true',
+                    'backorders_allow'=>'false',     
+                    'backorders'=>'no', 
                     'short_description' =>'<div class="concepto_prod">
                             <div class="span_concepto">'.$concepto.'</div>
                             <div class="sku-prod">Ref: '
@@ -214,7 +219,7 @@ while($paginaDesde!=$paginaHasta){
                     'stock_quantity' => round($registro->existencias->existencias),
                     //stock_status Options: instock, outofstock, onbackorder. Default is instock.
                     //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
-                    'stock_status' =>'instock',
+                    'stock_status' => $stock_status,
                     //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
                     'catalog_visibility' => $visibilidad,
 

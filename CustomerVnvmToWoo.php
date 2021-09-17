@@ -30,7 +30,7 @@ $woocommerce = new Client(
 // ================================
 
 $mail = $_POST['email'];
-$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|CLI|GET|" . $mail;
+$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|CLI|GET|" . urlencode($mail);
 
 print_r($url_API);
 die;

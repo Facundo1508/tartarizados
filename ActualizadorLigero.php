@@ -127,15 +127,19 @@ while($paginaDesde!=$paginaHasta){
                 'key'=>'_visibilidad_publicable',
                 'value'=> $visibilidad_publicable
             ];
-
-
+            $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
+      
             $data = [  
 
                 'name' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo ,
                 'catalog_visibility'=>$visibilidad,
                 'regular_price' => (string)$price,
                 'sale_price'=>(string)$sale_price,
+                'manage_stock'=>'true',
+                'backorders_allow'=>'false',
+                'backorders'=>'no',
                 'stock_quantity' => round($registro->existencias->existencias),
+                'stock_status' => $stock_status,
                 'meta_data' => $meta
             
             ];   

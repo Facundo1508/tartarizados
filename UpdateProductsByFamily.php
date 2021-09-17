@@ -150,11 +150,16 @@ foreach($ListNrefObj as $idVnvm){
             $regular_price=$registros->{'tarifa-9'}->precio;
             //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
             $sale_price=$registros->{'tarifa-8'}->precio <= 0 ? $registros->{'tarifa-9'}->precio: $registros->{'tarifa-8'}->precio;
+            $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
+
             $data = [
  
                 'name'=>$nameProd,
                 'regular_price'=>(string)$regular_price,
                 'sale_price'=>(string)$sale_price,
+                'manage_stock'=>'true',
+                'backorders_allow'=>'false',
+                'backorders'=>'no',
                 'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
                 <div class="sku-prod">Ref: '
@@ -170,9 +175,9 @@ foreach($ListNrefObj as $idVnvm){
                 </div>
                 </div>',
                 'stock_quantity' =>round($registros->existencias->existencias),
+                'stock_status' => $stock_status,
                 'images' => $imagenes,
-                'meta_data' => $meta
- 
+                'meta_data' => $meta 
             ];        
  
  
@@ -227,7 +232,7 @@ foreach($ListNrefObj as $idVnvm){
 
 function ListadoActualizar($id){
 
-$url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.$id.'|'.$id.'|';
+$url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.urlencode($id).'|'.urlencode($id).'|';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url_API);

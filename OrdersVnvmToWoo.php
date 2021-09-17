@@ -44,7 +44,7 @@
     $num = $_POST['num'];
     $fch = $_POST['fch'];
     $newfch = date("d-m-Y", strtotime($fch));
-    $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|$email|$serie|$num|$newfch";
+    $url_API = '80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|GET|'.urlencode($email).'|'.urlencode($serie).'|'.urlencode($num).'|'.urlencode($newfch).'';
 
     // print_r($url_API);
     // die;

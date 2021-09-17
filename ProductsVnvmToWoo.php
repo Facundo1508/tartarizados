@@ -37,7 +37,7 @@ $woocommerce = new Client(
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
 $id = $_POST['id'];
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|1|1|1|1|Publicable|||".$id."|".$id;
+$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|1|1|1|1|Publicable|||".urlencode($id)."|".urlencode($id);
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -169,12 +169,17 @@ if ($getSku) {
    
     $regular_price=$registros[0]->{'tarifa-9'}->precio <= 0 ?$registros[0]->{'tarifa-3'}->precio:$registros[0]->{'tarifa-9'}->precio;
 
+    $stock_status=round($registros[0]->existencias->existencias)>=1 ? 'instock' : 'outofstock';
+
     $data = [        
 
         'name' => empty($registros[0]->nombreAlternativo) || is_null($registros[0]->nombreAlternativo)  ? $registros[0]->nombre : $registros[0]->nombreAlternativo ,
         //Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
         'type' => 'simple',
-        'regular_price' => (string)$regular_price ,        
+        'regular_price' => (string)$regular_price ,   
+        'manage_stock'=>'true',
+        'backorders_allow'=>'false',  
+        'backorders'=>'no',   
         'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
                 <div class="sku-prod">Ref: '
@@ -201,7 +206,7 @@ if ($getSku) {
         'stock_quantity' => round($registros[0]->existencias->existencias),
         //stock_status Options: instock, outofstock, onbackorder. Default is instock.
         //aqui se podria solucionar mirando el stock de vnvm y eligiendo la opcion correcta 
-        'stock_status' =>'instock',
+        'stock_status' => $stock_status,
         //Catalog visibility. Options: visible, catalog, search and hidden. Default is visible.
         'catalog_visibility' => $visibilidad,
         
