@@ -50,7 +50,7 @@ while($paginaDesde!=$paginaHasta){
     $items_origin = curl_exec($ch);
     curl_close($ch);
 
-    $getDecodedVnvm = json_decode(utf8_encode($items_origin));
+    $getDecodedVnvm = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', utf8_encode($items_origin)));
 
     $datosClientes = (object)$getDecodedVnvm->articulos;
 
@@ -128,10 +128,11 @@ while($paginaDesde!=$paginaHasta){
                 'value'=> $visibilidad_publicable
             ];
             $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
-      
+            $nameProd= empty($registro->nombre ) || is_null($registro->nombre )  ? $registro->nombreAlternativo: $registro->nombre ;
+
             $data = [  
 
-                'name' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo ,
+                'name' => $nameProd ,
                 'catalog_visibility'=>$visibilidad,
                 'regular_price' => (string)$price,
                 'sale_price'=>(string)$sale_price,
@@ -141,7 +142,6 @@ while($paginaDesde!=$paginaHasta){
                 'stock_quantity' => round($registro->existencias->existencias),
                 'stock_status' => $stock_status,
                 'meta_data' => $meta
-            
             ];   
 
             $sku=$registro->{'N/Ref'};

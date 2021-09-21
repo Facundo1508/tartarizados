@@ -51,7 +51,7 @@ while($paginaDesde!=$paginaHasta){
     $items_origin = curl_exec($ch);
     curl_close($ch);
 
-    $getDecodedVnvm = json_decode(utf8_encode($items_origin));
+    $getDecodedVnvm = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', utf8_encode($items_origin)));
 
     $datosClientes = (object)$getDecodedVnvm->articulos;
 
@@ -182,10 +182,11 @@ while($paginaDesde!=$paginaHasta){
                 $regular_price=$registro->{'tarifa-9'}->precio;
                 $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
                 $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
-                
+                $nameProd= empty($registro->nombre ) || is_null($registro->nombre )  ? $registro->nombreAlternativo: $registro->nombre ;
+
                 $data = [        
                 
-                    'name' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo ,
+                    'name' => $nameProd,
                     //Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
                     'type' => 'simple',
                     'regular_price' => (string)$regular_price,

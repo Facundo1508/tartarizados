@@ -16,13 +16,13 @@ set_time_limit ( 0 );
 // Conexión WooCommerce API destino
 // ================================
 //PRUEBAS
-$url_API_woo = 'https://pruebas.tartarizados.com/';
-$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+// $url_API_woo = 'https://pruebas.tartarizados.com/';
+// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 //PRODUCCION
-// $url_API_woo = 'https://tartarizados.com/';
-// $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
-// $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
+$url_API_woo = 'https://tartarizados.com/';
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -43,7 +43,7 @@ foreach($ListNrefObj as $idVnvm){
     
     try{
 
-        $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||".trim(urlencode($id))."|".trim(urlencode($id));
+        $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||".trim($idVnvm)."|".trim($idVnvm);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -61,8 +61,8 @@ foreach($ListNrefObj as $idVnvm){
             exit('❗Error en API origen');
         }
 
-        $getDecodedVnvm = json_decode(utf8_encode($items_origin));
-        
+        $getDecodedVnvm = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', utf8_encode($items_origin)));
+
         if(is_null($getDecodedVnvm->articulos) || empty($getDecodedVnvm->articulos)){
 
             echo "➜ no se encontro el articulo ... \n";
@@ -138,7 +138,7 @@ foreach($ListNrefObj as $idVnvm){
                 'value'=> $visibilidad_publicable
             ];
 
-            $nameProd= empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo;
+            $nameProd= empty($registros->nombre ) || is_null($registros->nombre )  ? $registros->nombreAlternativo: $registros->nombre ;
 
             $concepto=empty($registro->concepto) || is_null($registro->concepto) ?"Sin Concepto": $registro->concepto ;
             $anchoDiametro= $registro->ancho=== 0 || empty($registro->ancho) ? $registro->diametro : $registro->ancho;

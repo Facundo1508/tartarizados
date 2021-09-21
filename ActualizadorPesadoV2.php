@@ -83,7 +83,7 @@ $woocommerce = new Client(
             exit('❗Error en API origen');
         }
         
-        $getDecodedVnvm = json_decode(utf8_encode($items_origin));
+        $getDecodedVnvm = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', utf8_encode($items_origin)));
         
         if(is_null($getDecodedVnvm->articulos) || empty($getDecodedVnvm->articulos)){
 
@@ -161,7 +161,8 @@ $woocommerce = new Client(
                 'value'=> $visibilidad_publicable
             ];
 
-            $nameProd= empty($registros->nombreAlternativo) || is_null($registros->nombreAlternativo)  ? $registros->nombre : $registros->nombreAlternativo;
+            $nameProd= empty($registros->nombre ) || is_null($registros->nombre )  ? $registros->nombreAlternativo: $registros->nombre ;
+
 
             $concepto=empty($registros->concepto) || is_null($registros->concepto) ?"Sin Concepto": $registros->concepto ;
             $anchoDiametro= $registros->ancho=== 0 || empty($registros->ancho) ? $registros->diametro : $registros->ancho;

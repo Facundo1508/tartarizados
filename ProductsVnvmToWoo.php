@@ -56,13 +56,16 @@ if (!$items_origin) {
     exit('❗Error en API origen');
 }
 
-$getDecodedVnvm = json_decode(utf8_encode($items_origin));
+$getDecodedVnvm = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', utf8_encode($items_origin)));
 
 //probar este decodificador
 //utf8_decode()
 //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
 $datosClientes = (object)$getDecodedVnvm->articulos;
 
+echo new Categorias(2);
+print_r($datosClientes);
+die;
 $registros = $datosClientes->registros;
 
 if( $datosClientes->totalRegistros <= 0 ){
@@ -170,10 +173,11 @@ if ($getSku) {
     $regular_price=$registros[0]->{'tarifa-9'}->precio <= 0 ?$registros[0]->{'tarifa-3'}->precio:$registros[0]->{'tarifa-9'}->precio;
 
     $stock_status=round($registros[0]->existencias->existencias)>=1 ? 'instock' : 'outofstock';
+    $nameProd= empty($registros[0]->nombre ) || is_null($registros[0]->nombre )  ? $registros[0]->nombreAlternativo: $registros[0]->nombre ;
 
     $data = [        
 
-        'name' => empty($registros[0]->nombreAlternativo) || is_null($registros[0]->nombreAlternativo)  ? $registros[0]->nombre : $registros[0]->nombreAlternativo ,
+        'name' => $nameProd,
         //Options: simple, grouped, external and variable. Default is simple. SOLO TIENE ESTOS TIPOS 
         'type' => 'simple',
         'regular_price' => (string)$regular_price ,   
@@ -211,7 +215,16 @@ if ($getSku) {
         'catalog_visibility' => $visibilidad,
         
         'images' => $images,
-        'meta_data' => $meta
+        'meta_data' => $meta,
+            
+        'categories' => [
+            [
+                'id' => 9
+            ],
+            [
+                'id' => 14
+            ]
+        ]
        
     ];
    
@@ -228,3 +241,22 @@ if ($getSku) {
     
 </body>
 </html>
+
+<?php
+class Categorias extends SplEnum {
+    const __default = self::Enero;
+    
+    const Enero = 1;
+    const Febrero = 2;
+    const Marzo = 3;
+    const Abril = 4;
+    const Mayo = 5;
+    const Junio = 6;
+    const Julio = 7;
+    const Agosto = 8;
+    const Septiembre = 9;
+    const Octubre = 10;
+    const Noviembre = 11;
+    const Diciembre = 12;
+}
+?>
