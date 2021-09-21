@@ -61,7 +61,8 @@ foreach($ListNrefObj as $idVnvm){
             exit('❗Error en API origen');
         }
 
-        $getDecodedVnvm = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', utf8_encode($items_origin)));
+        $getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $getDecodedVnvm);
+	    $getDecodedVnvm = json_decode(utf8_encode($items_origin));
 
         if(is_null($getDecodedVnvm->articulos) || empty($getDecodedVnvm->articulos)){
 

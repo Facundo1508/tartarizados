@@ -43,7 +43,7 @@ $arrayErrores=array();
 
 while($paginaDesde!=$paginaHasta){
 
-    $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|'.$paginaDesde.'|||3';
+    $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|'.$paginaDesde.'|||Publicable';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $url_API);
@@ -51,7 +51,8 @@ while($paginaDesde!=$paginaHasta){
     $items_origin = curl_exec($ch);
     curl_close($ch);
 
-    $getDecodedVnvm = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', utf8_encode($items_origin)));
+    $getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $getDecodedVnvm);
+    $getDecodedVnvm = json_decode(utf8_encode($items_origin));
 
     $datosClientes = (object)$getDecodedVnvm->articulos;
 
@@ -180,7 +181,7 @@ while($paginaDesde!=$paginaHasta){
     }
     $paginaDesde++;    
 }
-mail('ivan.popconsulting@gmail.com', 'Error Actualizador Ligero', '<pre>'.print_r($array, true).'</pre>');
+mail('ivan.popconsulting@gmail.com', 'Error Actualizador', '<pre>'.print_r($array, true).'</pre>');
 
 function ContadorVnvm(){
 

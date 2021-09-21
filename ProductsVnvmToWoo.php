@@ -56,8 +56,8 @@ if (!$items_origin) {
     exit('❗Error en API origen');
 }
 
-$getDecodedVnvm = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', utf8_encode($items_origin)));
-
+$getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $getDecodedVnvm);
+$getDecodedVnvm = json_decode(utf8_encode($items_origin));
 //probar este decodificador
 //utf8_decode()
 //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 

@@ -51,7 +51,8 @@ while($paginaDesde!=$paginaHasta){
     $items_origin = curl_exec($ch);
     curl_close($ch);
 
-    $getDecodedVnvm = json_decode( preg_replace('/[\x00-\x1F\x80-\xFF]/', '', utf8_encode($items_origin)));
+    $getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $getDecodedVnvm);
+    $getDecodedVnvm = json_decode(utf8_encode($items_origin));
 
     $datosClientes = (object)$getDecodedVnvm->articulos;
 
