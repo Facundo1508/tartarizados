@@ -218,7 +218,8 @@ function ContadorVnvm(){
     
     $datosClientes = (object)$getDecodedVnvm->articulos;
 
-    $paginaHasta= $datosClientes->totalRegistros;
+    $paginaHasta= ($datosClientes->totalRegistros/100)+1;
+    
     return $paginaHasta;
 }
 
