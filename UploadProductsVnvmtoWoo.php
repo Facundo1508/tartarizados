@@ -138,7 +138,7 @@ foreach($ListNrefObj as $idVnvm){
                 'value'=> $visibilidad_publicable
             ];
 
-            $nameProd= empty($registros->nombre ) || is_null($registros->nombre )  ? $registros->nombreAlternativo: $registros->nombre ;
+            $nameProd= empty($registro->nombre ) || is_null($registro->nombre )  ? $registro->nombreAlternativo: $registro->nombre ;
 
             $concepto=empty($registro->concepto) || is_null($registro->concepto) ?"Sin Concepto": $registro->concepto ;
             $anchoDiametro= $registro->ancho=== 0 || empty($registro->ancho) ? $registro->diametro : $registro->ancho;
@@ -180,7 +180,7 @@ foreach($ListNrefObj as $idVnvm){
                 'meta_data' => $meta
 
             ];        
-         
+            
 
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 

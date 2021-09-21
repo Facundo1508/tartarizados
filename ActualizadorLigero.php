@@ -39,10 +39,11 @@ $paginaDesde=0;
 $paginaHasta=0;
 
 $paginaHasta=ContadorVnvm();
-    
+$arrayErrores=array();   
+
 while($paginaDesde!=$paginaHasta){
 
-    $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|'.$paginaDesde.'|||Publicable';
+    $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|'.$paginaDesde.'|||3';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $url_API);
@@ -162,6 +163,8 @@ while($paginaDesde!=$paginaHasta){
 
                 if (!$resultCreate) {
                     echo ("❗Error al actualizar producto: ".$registro->{'N/Ref'}."\n <br>");
+                    $arrayErrores[]=$registro->{'N/Ref'};                
+
                 } else {
                     // $tiempoEjecucion=microtime(true);
                     print("✔ producto Actualizado correctamente".$registro->{'N/Ref'}." \n <br>");            
@@ -170,12 +173,14 @@ while($paginaDesde!=$paginaHasta){
             
         }catch(Exception $ex)
         {
-            echo("Error capturado: " .$ex);           
+            echo("Error capturado: " .$ex);   
+            $arrayErrores[]=$registro->{'N/Ref'};    
         }
        
     }
-    $paginaDesde++;
+    $paginaDesde++;    
 }
+mail('ivan.popconsulting@gmail.com', 'Error Actualizador Ligero', '<pre>'.print_r($array, true).'</pre>');
 
 function ContadorVnvm(){
 

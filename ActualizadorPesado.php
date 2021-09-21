@@ -98,7 +98,7 @@ while($paginaDesde!=$paginaHasta){
 
                         $images[$key] = [ 
 
-                            'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
+                            'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$value->visd,
                             'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
                         ];
                     }
