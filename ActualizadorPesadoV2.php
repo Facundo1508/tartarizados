@@ -83,8 +83,8 @@ $woocommerce = new Client(
             exit('❗Error en API origen');
         }
         
-        $getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $getDecodedVnvm);
-	    $getDecodedVnvm = json_decode(utf8_encode($items_origin));        
+        $getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin);
+	    $getDecodedVnvm = json_decode(utf8_encode($getDecodedVnvm));    
         if(is_null($getDecodedVnvm->articulos) || empty($getDecodedVnvm->articulos)){
 
             echo "➜ no se encontro el articulo ... \n";
