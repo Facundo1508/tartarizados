@@ -131,13 +131,33 @@ while($paginaDesde!=$paginaHasta){
             ];
             $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
             $nameProd= empty($registro->nombre ) || is_null($registro->nombre )  ? $registro->nombreAlternativo: $registro->nombre ;
-
+            
+            $concepto=empty($registro->concepto) || is_null($registro->concepto) ?"Sin Concepto": $registro->concepto ;
+            $anchoDiametro= $registro->ancho=== 0 || empty($registro->ancho) ? $registro->diametro : $registro->ancho;
+            $altura= $registro->alto;
+            $unidadesCaja=$registro->unidadesCaja;
+            $formatoVentaNombre= $registro->formatoVenta->nombre;
+            
             $data = [  
 
                 'name' => $nameProd ,
                 'catalog_visibility'=>$visibilidad,
                 'regular_price' => (string)$price,
                 'sale_price'=>(string)$sale_price,
+                'short_description' =>'<div class="concepto_prod">
+                <div class="span_concepto">'.$concepto.'</div>
+                <div class="sku-prod">Ref: '
+                    .$registro->{'N/Ref'}.'</div>
+                <div class="div_icons">
+                <i class="fas fa-arrows-alt-h" aria-hidden="true"></i>
+                '.$anchoDiametro.'mm
+                <i class="fas fa-arrows-alt-v" aria-hidden="true"></i>
+                '.$altura.'mm
+                </div>
+                <div class="caja"><i class="fas fa-box"
+                aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
+                </div>
+                </div>',
                 'manage_stock'=>'true',
                 'backorders_allow'=>'false',
                 'backorders'=>'no',
