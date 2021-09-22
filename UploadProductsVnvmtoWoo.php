@@ -61,10 +61,10 @@ foreach($ListNrefObj as $idVnvm){
             exit('❗Error en API origen');
         }
 
-        $getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin);
-	    $getDecodedVnvm = json_decode(utf8_encode($getDecodedVnvm));
+        //$getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin);
+	    $getDecodedVnvm = json_decode(utf8_encode($items_origin));
 
-        if(is_null($getDecodedVnvm->articulos) || empty($getDecodedVnvm->articulos)){
+        if(is_null($getDecodedVnvm) || empty($getDecodedVnvm)){
 
             echo "➜ no se encontro el articulo ... \n";
             echo $idVnvm;
@@ -73,6 +73,7 @@ foreach($ListNrefObj as $idVnvm){
         }
 
         $datosClientes = (object)$getDecodedVnvm->articulos;
+       
 
         $registros = $datosClientes->registros;
         
@@ -139,7 +140,7 @@ foreach($ListNrefObj as $idVnvm){
                 'value'=> $visibilidad_publicable
             ];
 
-            $nameProd= empty($registro->nombre ) || is_null($registro->nombre )  ? $registro->nombreAlternativo: $registro->nombre ;
+            $nameProd= empty($registro->nombreAlternativo ) || is_null($registro->nombreAlternativo )  ? $registro->nombre: $registro->nombreAlternativo ;
 
             $concepto=empty($registro->concepto) || is_null($registro->concepto) ?"Sin Concepto": $registro->concepto ;
             $anchoDiametro= $registro->ancho=== 0 || empty($registro->ancho) ? $registro->diametro : $registro->ancho;
@@ -158,6 +159,7 @@ foreach($ListNrefObj as $idVnvm){
                 'name'=>$nameProd,
                 'regular_price'=>(string)$regular_price,
                 'sale_price'=>(string)$sale_price,
+                'catalog_visibility'=>'visible',
                 'manage_stock'=>'true',
                 'backorders_allow'=>'false',
                 'backorders'=>'no',
@@ -180,8 +182,7 @@ foreach($ListNrefObj as $idVnvm){
                 'images' => $imagenes,
                 'meta_data' => $meta
 
-            ];        
-            
+            ];
 
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 

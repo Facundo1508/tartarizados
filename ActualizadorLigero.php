@@ -35,7 +35,7 @@ $woocommerce = new Client(
     ]
 );
 
-$paginaDesde=0;
+$paginaDesde=1;
 $paginaHasta=0;
 
 $paginaHasta=ContadorVnvm();
@@ -61,7 +61,7 @@ while($paginaDesde!=$paginaHasta){
     foreach($registros as $registro){
        
         try{
-                
+               print_r($registro); 
             $price=(string)$registro->{'tarifa-9'}->precio;
             $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
 
@@ -165,6 +165,9 @@ while($paginaDesde!=$paginaHasta){
                 'stock_status' => $stock_status,
                 'meta_data' => $meta
             ];   
+            
+            print_r($data);
+            die;
 
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
@@ -201,7 +204,7 @@ while($paginaDesde!=$paginaHasta){
     }
     $paginaDesde++;    
 }
-mail('ivan.popconsulting@gmail.com', 'Error Actualizador', '<pre>'.print_r($array, true).'</pre>');
+mail('ivan.popconsulting@gmail.com', 'Error Actualizador', '<pre>'.print_r($arrayErrores, true).'</pre>');
 
 function ContadorVnvm(){
 
