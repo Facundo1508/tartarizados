@@ -155,9 +155,17 @@ foreach($ListNrefObj as $idVnvm){
             $unidadesCaja=$registro->unidadesCaja;
             $formatoVentaNombre= $registro->formatoVenta->nombre;
 
-            $regular_price=$registro->{'tarifa-9'}->precio;
+            $valorIva = '1.'.$registro->porcentajeIvaVenta;
+            
+            $calculoIVA=doubleval($valorIva);
+
             //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
-            $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+            $precioOfertaSinIVA=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+            $precioSinIVA =$registro->{'tarifa-9'}->precio;
+
+            $sale_price=$precioOfertaSinIVA*$calculoIVA;
+           
+            $regular_price=$precioSinIVA*$calculoIVA;
 
             $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
 
