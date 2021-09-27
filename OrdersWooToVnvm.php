@@ -105,8 +105,8 @@ $objOrderWoo = (object)$getPedidosWoo;
             
         }
 
-        // $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST|".$mail."|".$serie."|".$numero."|".$fecha."|".$suRef."|".$nombreFiscal."|".$telefono."|".$direccion."|".$codPostal."|".$localidad."|".$pais."|".$observacionesEnvio."|".$observaciones."|".$codFormaPago."|".$confirmado."|".$salidaCompleta;
-        $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST||".$serie."|".$numero."|".$fecha."|".$suRef."|".$nombreFiscal."|".$telefono."|".$direccion."|".$codPostal."|".$localidad."|".$pais."|".$observacionesEnvio."|".$observaciones."|".$codFormaPago."|".$confirmado."|".$salidaCompleta;
+        // $url_API = "81.45.33.23/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST|".$mail."|".$serie."|".$numero."|".$fecha."|".$suRef."|".$nombreFiscal."|".$telefono."|".$direccion."|".$codPostal."|".$localidad."|".$pais."|".$observacionesEnvio."|".$observaciones."|".$codFormaPago."|".$confirmado."|".$salidaCompleta;
+        $url_API = "81.45.33.23/cgi-vel/pruebas/api.pro?w_as=5684|PV|POST||".$serie."|".$numero."|".$fecha."|".$suRef."|".$nombreFiscal."|".$telefono."|".$direccion."|".$codPostal."|".$localidad."|".$pais."|".$observacionesEnvio."|".$observaciones."|".$codFormaPago."|".$confirmado."|".$salidaCompleta;
         $url_API=trim($url_API,'|');
 
         $ch = curl_init();

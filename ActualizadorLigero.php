@@ -43,7 +43,8 @@ $arrayErrores=array();
 
 while($paginaDesde!=$paginaHasta){
 
-    $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|'.$paginaDesde.'|||Publicable';
+    $url_API = 'http:/81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|'.$paginaDesde.'||1|Publicable';
+    
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $url_API);
@@ -51,8 +52,7 @@ while($paginaDesde!=$paginaHasta){
     $items_origin = curl_exec($ch);
     curl_close($ch);
 
-    $getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin);
-	$getDecodedVnvm = json_decode(utf8_encode($getDecodedVnvm));
+	$getDecodedVnvm = json_decode(utf8_encode($items_origin));
 
     $datosClientes = (object)$getDecodedVnvm->articulos;
 
@@ -61,7 +61,7 @@ while($paginaDesde!=$paginaHasta){
     foreach($registros as $registro){
        
         try{
-               print_r($registro); 
+         
             $price=(string)$registro->{'tarifa-9'}->precio;
             $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
 
@@ -141,7 +141,7 @@ while($paginaDesde!=$paginaHasta){
             $data = [  
 
                 'name' => $nameProd ,
-                'catalog_visibility'=>$visibilidad,
+                'catalog_visibility'=>'visible',
                 'regular_price' => (string)$price,
                 'sale_price'=>(string)$sale_price,
                 'short_description' =>'<div class="concepto_prod">
@@ -166,9 +166,6 @@ while($paginaDesde!=$paginaHasta){
                 'meta_data' => $meta
             ];   
             
-            print_r($data);
-            die;
-
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [
@@ -186,8 +183,7 @@ while($paginaDesde!=$paginaHasta){
                 $resultCreate = $woocommerce->put('products/'.$getWooProducts[0]->id, $data);
 
                 if (!$resultCreate) {
-                    echo ("❗Error al actualizar producto: ".$registro->{'N/Ref'}."\n <br>");
-                    $arrayErrores[]=$registro->{'N/Ref'};                
+                    echo ("❗Error al actualizar producto: ".$registro->{'N/Ref'}."\n <br>");                                    
 
                 } else {
                     // $tiempoEjecucion=microtime(true);
@@ -202,13 +198,15 @@ while($paginaDesde!=$paginaHasta){
         }
        
     }
+   
     $paginaDesde++;    
 }
+
 mail('ivan.popconsulting@gmail.com', 'Error Actualizador', '<pre>'.print_r($arrayErrores, true).'</pre>');
 
 function ContadorVnvm(){
 
-    $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|1|1|||Publicable';
+    $url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|1|1|||Publicable';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $url_API);

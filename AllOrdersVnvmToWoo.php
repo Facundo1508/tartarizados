@@ -33,7 +33,7 @@ $newDesde = date("d-m-Y", strtotime($desde));
 $hasta = $_POST['hasta'];
 $newHasta = date("d-m-Y", strtotime($hasta));
 
-$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|PV_BUS|GET|500|1|0|0||" . $newDesde . "|" . $newHasta;
+$url_API = "81.45.33.23/cgi-vel/pruebas/api.pro?w_as=5684|PV_BUS|GET|500|1|0|0||" . $newDesde . "|" . $newHasta;
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

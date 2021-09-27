@@ -42,7 +42,7 @@ $woocommerce = new Client(
 
     try{
 
-        // $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||".trim($idVnvm)."|".trim($idVnvm);
+        // $url_API = "81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||".trim($idVnvm)."|".trim($idVnvm);
 
         // $ch = curl_init();
         // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -105,7 +105,7 @@ $woocommerce = new Client(
             foreach($registros->imagenes as $imgVnvm ){
 
                  $imagenes[$count] = [                         
-                        'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd,
+                        'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$imgVnvm->visd,
                         'alt' => empty($registros->nombreAlternativo) || is_null($registros->nombreAlternativo)  ? $registros->nombre : $registros->nombreAlternativo
                     ];                                   
                     

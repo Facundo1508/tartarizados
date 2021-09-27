@@ -28,7 +28,7 @@ $woocommerce = new Client(
 // ===========================================
 $desde = $_POST['desde'];
 $hasta = $_POST['hasta'];
-$url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|".$desde."|".$hasta;
+$url_API = "81.45.33.23/cgi-vel/pruebas/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|".$desde."|".$hasta;
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -98,7 +98,7 @@ curl_close($ch);
                     
                     $images[$key] = [ 
                         
-                        'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$value->visd,
+                        'src' => (string)'http://81.45.33.23/cgi-vel/pruebas/'.$value->visd,
                     ];
                 }
             };    

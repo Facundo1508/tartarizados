@@ -81,7 +81,7 @@ $objProdcutWoo = (object)$getProductWoo;
         // print_r($stockStatus. '\n' .$stockCantidad. '\n');
         // die;
       
-        $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|ART_BUS|POST|".$sku."|".$nombre."|".$slug."|".$status."|".$visible."|".$descripcion."|".$descripcionCorta."|".$price."|".$desde."|".$hasta."|".$stockStatus."|".$stockCantidad."";
+        $url_API = "81.45.33.23/cgi-vel/pruebas/api.pro?w_as=5684|ART_BUS|POST|".$sku."|".$nombre."|".$slug."|".$status."|".$visible."|".$descripcion."|".$descripcionCorta."|".$price."|".$desde."|".$hasta."|".$stockStatus."|".$stockCantidad."";
         
      
         $ch = curl_init();

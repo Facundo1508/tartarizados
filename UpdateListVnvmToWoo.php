@@ -43,7 +43,7 @@ foreach($ListNrefObj as $idVnvm){
    
     try{
 
-        $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|.|.|".$idVnvm."|".$idVnvm;
+        $url_API = "81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|1|1|1|Publicable|.|.|".$idVnvm."|".$idVnvm;
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -74,7 +74,7 @@ foreach($ListNrefObj as $idVnvm){
     
                 $imagenes[$count] = [ 
     
-                    'src' => (string)'http://80.35.251.17/cgi-vel/pruebas/'.$imgVnvm->visd,
+                    'src' => (string)'http://81.45.33.23/cgi-vel/pruebas/'.$imgVnvm->visd,
                 ];         
     
                 $count++;

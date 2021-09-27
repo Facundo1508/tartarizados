@@ -43,7 +43,7 @@ foreach($ListNrefObj as $idVnvm){
     
     try{
 
-        $url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||".trim($idVnvm)."|".trim($idVnvm);
+        $url_API = "http://81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||".trim($idVnvm)."|".trim($idVnvm);
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -58,8 +58,15 @@ foreach($ListNrefObj as $idVnvm){
         
         
         if (!$items_origin) {
-            exit('❗Error en API origen');
+
+            echo('❗❗❗❗Error en API origen');
+            continue;
+            
         }
+        
+        // $arreglado=array_unique($items_origin ,int $short_flag='SORT_STRING');
+        // print_r($arreglado);
+        // die;
 
         //$getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin);
 	    $getDecodedVnvm = json_decode(utf8_encode($items_origin));
@@ -84,7 +91,7 @@ foreach($ListNrefObj as $idVnvm){
             foreach($registro->imagenes as $imgVnvm ){
 
                  $imagenes[$count] = [                         
-                        'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd,
+                        'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$imgVnvm->visd,
                         'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
                     ];                                   
                     

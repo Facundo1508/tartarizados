@@ -37,7 +37,7 @@ $woocommerce = new Client(
 // Conexión API VNVM. Esto tenemos que postear 
 // ===========================================
 $id = $_POST['id'];
-$url_API = "80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|1|1|1|1|Publicable|||".urlencode($id)."|".urlencode($id);
+$url_API = "81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|1|1|1|1|Publicable|||".urlencode($id)."|".urlencode($id);
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -107,7 +107,7 @@ if ($getSku) {
             
             $images[$key] = [ 
                 
-                'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$value->visd,
+                'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$value->visd,
                 'alt' => empty($registros[0]->nombreAlternativo) || is_null($registros[0]->nombreAlternativo)  ? $registros[0]->nombre : $registros[0]->nombreAlternativo
             ];
         }

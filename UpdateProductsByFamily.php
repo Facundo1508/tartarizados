@@ -43,7 +43,7 @@ foreach($ListNrefObj as $idVnvm){
     
     try{
  
-        $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.$idVnvm[$count].'|'.$idVnvm[$count].'|';
+        $url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.$idVnvm[$count].'|'.$idVnvm[$count].'|';
 	    //echo $url_API;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -83,7 +83,7 @@ foreach($ListNrefObj as $idVnvm){
             foreach($registros->imagenes as $imgVnvm ){
  
                  $imagenes[$count] = [                         
-                        'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$imgVnvm->visd,
+                        'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$imgVnvm->visd,
                         'alt' => empty($registros->nombreAlternativo) || is_null($registros->nombreAlternativo)  ? $registros->nombre : $registros->nombreAlternativo
                     ];                                   
  
@@ -232,7 +232,7 @@ foreach($ListNrefObj as $idVnvm){
 
 function ListadoActualizar($id){
 
-$url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.urlencode($id).'|'.urlencode($id).'|';
+$url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.urlencode($id).'|'.urlencode($id).'|';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url_API);

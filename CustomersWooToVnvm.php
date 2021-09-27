@@ -71,7 +71,7 @@
         // // ];
         
         
-        $url_API = "80.35.251.17/cgi-vel/pruebas/api.pro?w_as=5684|CLI|POST|".$mail;"|".$nombreFiscal;"|".$nombreComercial;"|".$NIF;"|".$contacto;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$telefono;"||CT3||R";
+        $url_API = "81.45.33.23/cgi-vel/pruebas/api.pro?w_as=5684|CLI|POST|".$mail;"|".$nombreFiscal;"|".$nombreComercial;"|".$NIF;"|".$contacto;"|".$direccion;"|".$codPostal;"|".$localidad;"|".$pais;"|".$telefono;"||CT3||R";
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

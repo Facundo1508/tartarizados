@@ -43,7 +43,7 @@ $paginaHasta=ContadorVnvm();
     
 while($paginaDesde!=$paginaHasta){
 
-    $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|'.$paginaDesde.'|||Publicable';
+    $url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|'.$paginaDesde.'|||Publicable';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $url_API);
@@ -99,7 +99,7 @@ while($paginaDesde!=$paginaHasta){
 
                         $images[$key] = [ 
 
-                            'src' => (string)'http://80.35.251.17/cgi-vel/vnvm/'.$value->visd,
+                            'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$value->visd,
                             'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
                         ];
                     }
@@ -249,7 +249,7 @@ while($paginaDesde!=$paginaHasta){
 
 function ContadorVnvm(){
 
-    $url_API = '80.35.251.17/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|1|1|||Publicable';
+    $url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|1|1|||Publicable';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $url_API);
