@@ -198,7 +198,8 @@ foreach($ListNrefObj as $idVnvm){
                 'meta_data' => $meta
 
             ];
-
+          
+            
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [

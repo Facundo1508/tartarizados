@@ -35,7 +35,7 @@ $woocommerce = new Client(
     ]
 );
 
-$paginaDesde=1;
+$paginaDesde=30;
 $paginaHasta=0;
 
 $paginaHasta=ContadorVnvm();
@@ -43,7 +43,7 @@ $arrayErrores=array();
 
 while($paginaDesde!=$paginaHasta){
 
-    $url_API = 'http:/81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|100|'.$paginaDesde.'||1|Publicable';
+    $url_API = 'http:/81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|50|'.$paginaDesde.'||1|Publicable';
     
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -62,8 +62,17 @@ while($paginaDesde!=$paginaHasta){
        
         try{
          
-            $price=(string)$registro->{'tarifa-9'}->precio;
-            $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+            $valorIva = '1.'.$registro->porcentajeIvaVenta;
+            
+            $calculoIVA=doubleval($valorIva);
+
+            //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
+            $precioOfertaSinIVA=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+            $precioSinIVA =$registro->{'tarifa-9'}->precio;
+
+            $sale_price=$precioOfertaSinIVA*$calculoIVA;
+           
+            $regular_price=$precioSinIVA*$calculoIVA;
 
             switch ($registro->publicable) {                
                 case "N":
@@ -142,7 +151,7 @@ while($paginaDesde!=$paginaHasta){
 
                 'name' => $nameProd ,
                 'catalog_visibility'=>'visible',
-                'regular_price' => (string)$price,
+                'regular_price' => (string)$regular_price,
                 'sale_price'=>(string)$sale_price,
                 'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
@@ -198,7 +207,7 @@ while($paginaDesde!=$paginaHasta){
         }
        
     }
-   
+  
     $paginaDesde++;    
 }
 
