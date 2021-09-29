@@ -76,21 +76,21 @@ foreach($ListNrefObj as $idVnvm){
  
         $registros = $datosClientes->registros;
  
-        foreach($registros as $registros){
- 
+        foreach($registros as $registro){
+           
             $imagenes= array();
             $count=0;
-            foreach($registros->imagenes as $imgVnvm ){
- 
+            foreach($registro->imagenes as $imgVnvm ){
+
                  $imagenes[$count] = [                         
                         'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$imgVnvm->visd,
-                        'alt' => empty($registros->nombreAlternativo) || is_null($registros->nombreAlternativo)  ? $registros->nombre : $registros->nombreAlternativo
+                        'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
                     ];                                   
- 
+                    
                 $count++;
             }
- 
-            switch ($registros->publicable) {                
+
+            switch ($registro->publicable) {                
                 case "N":
                     $visibilidad_publicable="0";//N
                     break;
@@ -104,12 +104,12 @@ foreach($ListNrefObj as $idVnvm){
                     $visibilidad_publicable="3";//B2B y B2C
             }; 
             //um_mayorista
-            $precio9=$registros->{'tarifa-9'}->precio;
-            $precio2=$registros->{'tarifa-2'}->precio;
+            $precio9=$registro->{'tarifa-9'}->precio;
+            $precio2=$registro->{'tarifa-2'}->precio;
             //um_mayorista-pastelero
-            $precio6=$registros->{'tarifa-6'}->precio;
-            $precio3=$registros->{'tarifa-3'}->precio;
- 
+            $precio6=$registro->{'tarifa-6'}->precio;
+            $precio3=$registro->{'tarifa-3'}->precio;
+            
             $resulMeta=array(
                 'um_mayorista' =>
                 array(
@@ -122,48 +122,63 @@ foreach($ListNrefObj as $idVnvm){
                 'selling_price' => $precio3,
                 )
             );
- 
+        
             $meta[0] = [
- 
+
                 'key'=>'_enable_role_based_price',
                 'value'=> '1'
             ];
             $meta[1] = [
- 
+
                 'key'=>'_role_based_price',
                 'value'=> $resulMeta
             ];
             $meta[2] = [
- 
+
                 'key'=>'_visibilidad_publicable',
                 'value'=> $visibilidad_publicable
             ];
- 
-            $nameProd= empty($registros->nombreAlternativo) || is_null($registros->nombreAlternativo)  ? $registros->nombre : $registros->nombreAlternativo;
- 
-            $concepto=empty($registros->concepto) || is_null($registros->concepto) ?"Sin Concepto": $registros->concepto ;
-            $anchoDiametro= $registros->ancho=== 0 || empty($registros->ancho) ? $registros->diametro : $registros->ancho;
-            $altura= $registros->alto;
-            $unidadesCaja=$registros->unidadesCaja;
-            $formatoVentaNombre= $registros->formatoVenta->nombre;
- 
-            $regular_price=$registros->{'tarifa-9'}->precio;
-            //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
-            $sale_price=$registros->{'tarifa-8'}->precio <= 0 ? $registros->{'tarifa-9'}->precio: $registros->{'tarifa-8'}->precio;
+
+            $nameProd= empty($registro->nombreAlternativo ) || is_null($registro->nombreAlternativo )  ? $registro->nombre: $registro->nombreAlternativo ;
+
+            $concepto=empty($registro->concepto) || is_null($registro->concepto) ?"Sin Concepto": $registro->concepto ;
+            $anchoDiametro= $registro->ancho=== 0 || empty($registro->ancho) ? $registro->diametro : $registro->ancho;
+            $altura= $registro->alto;
+            $unidadesCaja=$registro->unidadesCaja;
+            $formatoVentaNombre= $registro->formatoVenta->nombre;
+
+            if($registro->porcentajeIvaVenta==="0"){
+
+                $regular_price =$registro->{'tarifa-9'}->precio;
+                $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+
+            }else{
+                $valorIva = '1.'.$registro->porcentajeIvaVenta;
+            
+                $calculoIVA=doubleval($valorIva);
+    
+                //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
+                $precioOfertaSinIVA=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+                $precioSinIVA =$registro->{'tarifa-9'}->precio;
+
+                $regular_price=$precioSinIVA*$calculoIVA;
+                $sale_price=$precioOfertaSinIVA*$calculoIVA;
+            }
             $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
 
             $data = [
- 
+
                 'name'=>$nameProd,
                 'regular_price'=>(string)$regular_price,
                 'sale_price'=>(string)$sale_price,
+                'catalog_visibility'=>'visible',
                 'manage_stock'=>'true',
                 'backorders_allow'=>'false',
                 'backorders'=>'no',
                 'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
                 <div class="sku-prod">Ref: '
-                    .$registros->{'N/Ref'}.'</div>
+                    .$registro->{'N/Ref'}.'</div>
                 <div class="div_icons">
                 <i class="fas fa-arrows-alt-h" aria-hidden="true"></i>
                 '.$anchoDiametro.'mm
@@ -174,46 +189,44 @@ foreach($ListNrefObj as $idVnvm){
                 aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
                 </div>
                 </div>',
-                'stock_quantity' =>round($registros->existencias->existencias),
+                'stock_quantity' =>round($registro->existencias->existencias),
                 'stock_status' => $stock_status,
                 'images' => $imagenes,
-                'meta_data' => $meta 
-            ];        
+                'meta_data' => $meta
+
+            ];
  
  
-            $sku=$registros->{'N/Ref'};
+            $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [
                 'sku' => (string)$sku
             ];
  
-            var_dump($data);
             $getWooProducts = $woocommerce->get('products', $params);      
-	    if(empty($getWooProducts)){
-                $data["stock_status"] = "instock";
-                $data["type"] = "simple";
-                $data["backorders"] = "yes";
-                $data["sku"] = (string)$sku;
-                $data["dimensions"] = [
+
+	        if(empty($getWooProducts)){
+            $data["stock_status"] = "instock";
+            $data["type"] = "simple";
+            $data["backorders"] = "yes";
+            $data["sku"] = (string)$sku;
+            $data["dimensions"] = [
  
-                        'length' => (string)$registros->largo,
-                        'width' => (string)$anchoDiametro,
-                        'height' => (string)$altura 
-                    ];
-		var_dump($data);
-                $resultCreate = $woocommerce->post('products',  $data);
- 
- 
-	    }
-            else{
+                'length' => (string)$registro->largo,
+                'width' => (string)$anchoDiametro,
+                'height' => (string)$altura 
+            ];
+
+            $resultCreate = $woocommerce->post('products',  $data); 
+	        }else{
               $resultCreate = $woocommerce->put('products/'.$getWooProducts[0]->id, $data);
-	    }
+	        }
  
             if (!$resultCreate) {
-                echo ("❗Error al actualizar productos ".$registros->{'N/Ref'}." \n");
+                echo ("❗Error al actualizar productos ".$registro->{'N/Ref'}." \n");
             } else {
                 $tiempoEjecucion=microtime(true);
-                print("✔ Producto ". $registros->{'N/Ref'}." actualizado correctamente \n <br>");            
+                print("✔ Producto ". $registro->{'N/Ref'}." actualizado correctamente \n <br>");            
             }
  
         }
