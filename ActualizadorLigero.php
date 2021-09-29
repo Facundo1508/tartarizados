@@ -60,19 +60,26 @@ while($paginaDesde!=$paginaHasta){
 
     foreach($registros as $registro){
        
-        try{
-         
-            $valorIva = '1.'.$registro->porcentajeIvaVenta;
+        try{         
             
-            $calculoIVA=doubleval($valorIva);
+            if($registro->porcentajeIvaVenta==="0"){
 
-            //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
-            $precioOfertaSinIVA=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
-            $precioSinIVA =$registro->{'tarifa-9'}->precio;
+                $regular_price =$registro->{'tarifa-9'}->precio;
+                $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
 
-            $sale_price=$precioOfertaSinIVA*$calculoIVA;
-           
-            $regular_price=$precioSinIVA*$calculoIVA;
+            }else{
+                $valorIva = '1.'.$registro->porcentajeIvaVenta;
+            
+                $calculoIVA=doubleval($valorIva);
+    
+                //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
+                $precioOfertaSinIVA=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+                $precioSinIVA =$registro->{'tarifa-9'}->precio;
+
+                $regular_price=$precioSinIVA*$calculoIVA;
+                $sale_price=$precioOfertaSinIVA*$calculoIVA;
+            }          
+                      
 
             switch ($registro->publicable) {                
                 case "N":
