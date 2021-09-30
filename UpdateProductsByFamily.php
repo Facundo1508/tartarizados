@@ -16,13 +16,16 @@ set_time_limit ( 0 );
 // Conexión WooCommerce API destino
 // ================================
 //PRUEBAS
+ 
+/*
 $url_API_woo = 'https://pruebas.tartarizados.com/';
 $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
 $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+*/
 //PRODUCCION
-// $url_API_woo = 'https://tartarizados.com/';
-// $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
-// $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
+$url_API_woo = 'https://tartarizados.com/';
+$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
  
 $woocommerce = new Client(
     $url_API_woo,
@@ -34,17 +37,25 @@ $woocommerce = new Client(
         'verify_ssl' => false
     ]
 );
-
+ 
 $id = $_POST['familia'];
-
-$ListNrefObj[]= ListadoActualizar($id);
+ 
+$ListNrefObj= ListadoActualizar($id);
 $count=0;
+var_dump($ListNrefObj);
+ob_flush();
+flush();
+ 
+ 
 foreach($ListNrefObj as $idVnvm){
-    
+ 
     try{
  
-        $url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.$idVnvm[$count].'|'.$idVnvm[$count].'|';
+        $url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||'.$idVnvm.'|'.$idVnvm.'|';
 	    //echo $url_API;
+ 
+        ob_flush();
+        flush();
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url_API);
@@ -58,9 +69,10 @@ foreach($ListNrefObj as $idVnvm){
  
  
         if (!$items_origin) {
-            exit('❗Error en API origen');
+            echo('❗❗❗❗Error en API origen');
+            continue;
         }
- 
+        $items_origin = str_replace(array("\n", "\r"), '', $items_origin);
         $getDecodedVnvm = json_decode(utf8_encode($items_origin));
         //var_dump($getDecodedVnvm);
  
@@ -77,19 +89,21 @@ foreach($ListNrefObj as $idVnvm){
         $registros = $datosClientes->registros;
  
         foreach($registros as $registro){
-           
+            ob_flush();
+            flush();
+ 
             $imagenes= array();
             $count=0;
             foreach($registro->imagenes as $imgVnvm ){
-
+ 
                  $imagenes[$count] = [                         
                         'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$imgVnvm->visd,
                         'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
                     ];                                   
-                    
+ 
                 $count++;
             }
-
+ 
             switch ($registro->publicable) {                
                 case "N":
                     $visibilidad_publicable="0";//N
@@ -109,7 +123,7 @@ foreach($ListNrefObj as $idVnvm){
             //um_mayorista-pastelero
             $precio6=$registro->{'tarifa-6'}->precio;
             $precio3=$registro->{'tarifa-3'}->precio;
-            
+ 
             $resulMeta=array(
                 'um_mayorista' =>
                 array(
@@ -122,52 +136,52 @@ foreach($ListNrefObj as $idVnvm){
                 'selling_price' => $precio3,
                 )
             );
-        
+ 
             $meta[0] = [
-
+ 
                 'key'=>'_enable_role_based_price',
                 'value'=> '1'
             ];
             $meta[1] = [
-
+ 
                 'key'=>'_role_based_price',
                 'value'=> $resulMeta
             ];
             $meta[2] = [
-
+ 
                 'key'=>'_visibilidad_publicable',
                 'value'=> $visibilidad_publicable
             ];
-
+ 
             $nameProd= empty($registro->nombreAlternativo ) || is_null($registro->nombreAlternativo )  ? $registro->nombre: $registro->nombreAlternativo ;
-
+ 
             $concepto=empty($registro->concepto) || is_null($registro->concepto) ?"Sin Concepto": $registro->concepto ;
             $anchoDiametro= $registro->ancho=== 0 || empty($registro->ancho) ? $registro->diametro : $registro->ancho;
             $altura= $registro->alto;
             $unidadesCaja=$registro->unidadesCaja;
             $formatoVentaNombre= $registro->formatoVenta->nombre;
-
+ 
             if($registro->porcentajeIvaVenta==="0"){
-
+ 
                 $regular_price =$registro->{'tarifa-9'}->precio;
                 $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
-
+ 
             }else{
                 $valorIva = '1.'.$registro->porcentajeIvaVenta;
-            
+ 
                 $calculoIVA=doubleval($valorIva);
-    
+ 
                 //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
                 $precioOfertaSinIVA=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
                 $precioSinIVA =$registro->{'tarifa-9'}->precio;
-
+ 
                 $regular_price=$precioSinIVA*$calculoIVA;
                 $sale_price=$precioOfertaSinIVA*$calculoIVA;
             }
             $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
-
+ 
             $data = [
-
+ 
                 'name'=>$nameProd,
                 'regular_price'=>(string)$regular_price,
                 'sale_price'=>(string)$sale_price,
@@ -193,7 +207,7 @@ foreach($ListNrefObj as $idVnvm){
                 'stock_status' => $stock_status,
                 'images' => $imagenes,
                 'meta_data' => $meta
-
+ 
             ];
  
  
@@ -204,20 +218,22 @@ foreach($ListNrefObj as $idVnvm){
             ];
  
             $getWooProducts = $woocommerce->get('products', $params);      
-
-	        if(empty($getWooProducts)){
-            $data["stock_status"] = "instock";
-            $data["type"] = "simple";
-            $data["backorders"] = "yes";
-            $data["sku"] = (string)$sku;
-            $data["dimensions"] = [
  
-                'length' => (string)$registro->largo,
-                'width' => (string)$anchoDiametro,
-                'height' => (string)$altura 
-            ];
-
-            $resultCreate = $woocommerce->post('products',  $data); 
+	        if(empty($getWooProducts)){
+                /*
+                $data["stock_status"] = "instock";
+                $data["type"] = "simple";
+                $data["backorders"] = "yes";
+                $data["sku"] = (string)$sku;
+                $data["dimensions"] = [
+ 
+                    'length' => (string)$registro->largo,
+                    'width' => (string)$anchoDiametro,
+                    'height' => (string)$altura 
+                ];
+ 
+                $resultCreate = $woocommerce->post('products',  $data); 
+                */
 	        }else{
               $resultCreate = $woocommerce->put('products/'.$getWooProducts[0]->id, $data);
 	        }
@@ -242,9 +258,9 @@ foreach($ListNrefObj as $idVnvm){
 ?>
  
 <?php
-
+ 
 function ListadoActualizar($id){
-
+ 
 $url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||||'.urlencode($id).'|'.urlencode($id).'|';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -252,28 +268,28 @@ curl_setopt($ch, CURLOPT_URL, $url_API);
 curl_setopt($ch, CURLOPT_HEADER, 0);
 $items_origin = curl_exec($ch);
 curl_close($ch);
-
-
+ 
+ 
 $getDecodedVnvm = json_decode(utf8_encode($items_origin));
-
+ 
 $datosClientes = (object)$getDecodedVnvm->articulos;
-
+ 
 $paginaHasta = $datosClientes->totalRegistros;
-
+ 
 // if($paginaHasta > 500 ){
-
+ 
 // }
-
+ 
 $registros = $datosClientes->registros;
 $count = 0;
-
+ 
 foreach($registros as $registro){
-    
+ 
     $ArrayRegistros[$count]=$registro->{'N/Ref'};
     $count++;
-    
+ 
 }
-
+ 
 return $ArrayRegistros;
 }
 ?>
