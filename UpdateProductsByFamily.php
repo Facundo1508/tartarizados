@@ -209,7 +209,31 @@ foreach($ListNrefObj as $idVnvm){
                 'meta_data' => $meta
  
             ];
+            
+             //dimensiones
+             $dimensiones=array();
+
+             if($registro-> largo>0){
+                 $largo = (string)$registro-> largo;//profundidad #capacidad# ????
+                 $dimensiones['length'] = $largo;
+             }
  
+             if($registro-> ancho>0){
+                 $ancho = (string)$registro-> ancho;//ancho
+                 $dimensiones['width'] = $ancho;
+             }
+             if($registro-> alto>0){
+ 
+                 $alto = (string)$registro-> alto;//alto
+                 $dimensiones['height'] = $alto;
+             }
+ 
+             $data['dimensions']=$dimensiones;
+ 
+             if($registro-> capacidad>0){
+                 $peso = (string) $registro->capacidad;//capacidad   
+                 $data['weight'] = $peso;    
+             }
  
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 

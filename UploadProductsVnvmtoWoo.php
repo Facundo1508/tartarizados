@@ -55,20 +55,16 @@ foreach($ListNrefObj as $idVnvm){
         $items_origin = curl_exec($ch);
         
         curl_close($ch);
-        
+        $items_origin = str_replace(array("\n", "\r"), '', $items_origin);
+
         
         if (!$items_origin) {
 
             echo('❗❗❗❗Error en API origen');
             continue;
             
-        }
-        
-        // $arreglado=array_unique($items_origin ,int $short_flag='SORT_STRING');
-        // print_r($arreglado);
-        // die;
+        }              
 
-        //$getDecodedVnvm = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $items_origin);
 	    $getDecodedVnvm = json_decode(utf8_encode($items_origin));
 
         if(is_null($getDecodedVnvm) || empty($getDecodedVnvm)){
@@ -81,7 +77,6 @@ foreach($ListNrefObj as $idVnvm){
 
         $datosClientes = (object)$getDecodedVnvm->articulos;
        
-
         $registros = $datosClientes->registros;
         
         foreach($registros as $registro){
@@ -173,7 +168,7 @@ foreach($ListNrefObj as $idVnvm){
                 $sale_price=$precioOfertaSinIVA*$calculoIVA;
             }
             $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
-
+            
             $data = [
 
                 'name'=>$nameProd,
@@ -196,15 +191,39 @@ foreach($ListNrefObj as $idVnvm){
                 <div class="caja"><i class="fas fa-box"
                 aria-hidden="true"></i> Caja '.$unidadesCaja.' '.$formatoVentaNombre.'
                 </div>
-                </div>',
+                </div>',              
                 'stock_quantity' =>round($registro->existencias->existencias),
                 'stock_status' => $stock_status,
                 'images' => $imagenes,
                 'meta_data' => $meta
 
             ];
-          
-            
+
+            //dimensiones
+            $dimensiones=array();
+
+            if($registro-> largo>0){
+                $largo = (string)$registro-> largo;//profundidad #capacidad# ????
+                $dimensiones['length'] = $largo;
+            }
+
+            if($registro-> ancho>0){
+                $ancho = (string)$registro-> ancho;//ancho
+                $dimensiones['width'] = $ancho;
+            }
+            if($registro-> alto>0){
+
+                $alto = (string)$registro-> alto;//alto
+                $dimensiones['height'] = $alto;
+            }
+
+            $data['dimensions']=$dimensiones;
+
+            if($registro-> capacidad>0){
+                $peso = (string) $registro->capacidad;//capacidad   
+                $data['weight'] = $peso;    
+            }
+           
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [
