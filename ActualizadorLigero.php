@@ -59,7 +59,7 @@ while($paginaDesde<=$paginaHasta){
     ob_flush();
     flush();
  
-    echo "<pre>-------------------</pre>";
+    
     echo $url_API;
     switch(json_last_error())
     {
@@ -80,7 +80,7 @@ while($paginaDesde<=$paginaHasta){
             echo ' - Malformed UTF-8 characters, possibly incorrectly encoded';
         break;
     }
-    echo "<pre>-------------------</pre>";
+    
  
     $datosClientes = (object)$getDecodedVnvm->articulos;
  
@@ -242,7 +242,26 @@ while($paginaDesde<=$paginaHasta){
                     print("✔ producto Actualizado correctamente".$registro->{'N/Ref'}." \n <br>");            
                 }
             }  
- 
+            
+            switch(json_last_error())
+            {
+                case JSON_ERROR_DEPTH:
+                    echo ' - Maximum stack depth exceeded';
+                break;
+                case JSON_ERROR_CTRL_CHAR:
+                    echo ' - Unexpected control character found';
+                    echo "<pre>" . utf8_encode(strip_tags($items_origin)) . "</pre>";           
+                break;
+                case JSON_ERROR_SYNTAX:
+                    echo ' - Syntax error, malformed JSON';
+                break;
+                case JSON_ERROR_STATE_MISMATCH:
+                    echo ' - Invalid or malformed JSON';
+                break;
+                case JSON_ERROR_UTF8:
+                    echo ' - Malformed UTF-8 characters, possibly incorrectly encoded';
+                break;
+            }
         }catch(Exception $ex)
         {
             echo("Error capturado: " .$ex);   
