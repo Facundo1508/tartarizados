@@ -39,23 +39,24 @@ $woocommerce = new Client(
 );
  
 $id = $_POST['familia'];
- 
+//$id = "P0503";
 $ListNrefObj= ListadoActualizar($id);
 $count=0;
-var_dump($ListNrefObj);
+//var_dump($ListNrefObj);
 ob_flush();
 flush();
  
- 
-foreach($ListNrefObj as $idVnvm){
+//$ListNrefObj = array_slice($ListNrefObj, 74); 
+foreach($ListNrefObj as $registro){
  
     try{
  
-        $url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||'.$idVnvm.'|'.$idVnvm.'|';
+       // $url_API = '81.45.33.23/cgi-vel/vnvm/api.pro?w_as=5684|ART_BUS|GET|500|1|1|1|Publicable|||'.$idVnvm.'|'.$idVnvm.'|';
 	    //echo $url_API;
  
-        ob_flush();
-        flush();
+        //ob_flush();
+        //flush();
+        /*
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url_API);
@@ -69,13 +70,14 @@ foreach($ListNrefObj as $idVnvm){
  
  
         if (!$items_origin) {
-            echo('❗❗❗❗Error en API origen');
-            continue;
+            exit('❗Error en API origen');
         }
         $items_origin = str_replace(array("\n", "\r"), '', $items_origin);
         $getDecodedVnvm = json_decode(utf8_encode($items_origin));
         //var_dump($getDecodedVnvm);
+ */
  
+ /*
         if(is_null($getDecodedVnvm->articulos) || empty($getDecodedVnvm->articulos)){
  
             echo "➜ no se encontro el articulo ... \n";
@@ -87,21 +89,25 @@ foreach($ListNrefObj as $idVnvm){
         $datosClientes = (object)$getDecodedVnvm->articulos;
  
         $registros = $datosClientes->registros;
+*/ 
+        //foreach($registros as $registro){
+            //ob_flush();
+            //flush();
  
-        foreach($registros as $registro){
-            ob_flush();
-            flush();
+            // $imagenes= array();
+            // $count=0;
  
-            $imagenes= array();
-            $count=0;
-            foreach($registro->imagenes as $imgVnvm ){
+            if($registro->publicable != "N"){
  
-                 $imagenes[$count] = [                         
-                        'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$imgVnvm->visd,
-                        'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
-                    ];                                   
+                foreach($registro->imagenes as $imgVnvm ){
  
-                $count++;
+                    $imagenes[$count] = [                         
+                            'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$imgVnvm->visd,
+                            'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
+                        ];                                   
+ 
+                    $count++;
+                }
             }
  
             switch ($registro->publicable) {                
@@ -209,31 +215,31 @@ foreach($ListNrefObj as $idVnvm){
                 'meta_data' => $meta
  
             ];
-            
-             //dimensiones
-             $dimensiones=array();
 
-             if($registro-> largo>0){
-                 $largo = (string)$registro-> largo;//profundidad #capacidad# ????
-                 $dimensiones['length'] = $largo;
-             }
- 
-             if($registro-> ancho>0){
-                 $ancho = (string)$registro-> ancho;//ancho
-                 $dimensiones['width'] = $ancho;
-             }
-             if($registro-> alto>0){
- 
-                 $alto = (string)$registro-> alto;//alto
-                 $dimensiones['height'] = $alto;
-             }
- 
-             $data['dimensions']=$dimensiones;
- 
-             if($registro-> capacidad>0){
-                 $peso = (string) $registro->capacidad;//capacidad   
-                 $data['weight'] = $peso;    
-             }
+            //dimensiones
+            $dimensiones=array();
+
+            if($registro-> largo>0){
+                $largo = (string)$registro-> largo;//profundidad #capacidad# ????
+                $dimensiones['length'] = $largo;
+            }
+
+            if($registro-> ancho>0){
+                $ancho = (string)$registro-> ancho;//ancho
+                $dimensiones['width'] = $ancho;
+            }
+            if($registro-> alto>0){
+
+                $alto = (string)$registro-> alto;//alto
+                $dimensiones['height'] = $alto;
+            }
+
+            $data['dimensions']=$dimensiones;
+
+            if($registro-> capacidad>0){
+                $peso = (string) $registro->capacidad;//capacidad   
+                $data['weight'] = $peso;    
+            }
  
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
@@ -243,6 +249,8 @@ foreach($ListNrefObj as $idVnvm){
  
             $getWooProducts = $woocommerce->get('products', $params);      
  
+            //var_dump($getWooProducts);
+            $resultCreate = false;
 	        if(empty($getWooProducts)){
                 /*
                 $data["stock_status"] = "instock";
@@ -263,21 +271,23 @@ foreach($ListNrefObj as $idVnvm){
 	        }
  
             if (!$resultCreate) {
-                echo ("❗Error al actualizar productos ".$registro->{'N/Ref'}." \n");
+                //echo ("❗Error al actualizar productos ".$registro->{'N/Ref'}." \n");
+                echo "➜ no se encontro el articulo ... "  .$registro->{'N/Ref'} . " \n";
             } else {
                 $tiempoEjecucion=microtime(true);
                 print("✔ Producto ". $registro->{'N/Ref'}." actualizado correctamente \n <br>");            
             }
  
-        }
-        $count++;
+        //}
+        //$count++;
  
     }
     catch(Exception $ex){
         echo($ex);
-        $count++;
+       // $count++;
         continue;
     }  
+  
 }
 ?>
  
@@ -293,7 +303,7 @@ curl_setopt($ch, CURLOPT_HEADER, 0);
 $items_origin = curl_exec($ch);
 curl_close($ch);
  
- 
+$items_origin = str_replace(array("\n", "\r"), '', $items_origin);
 $getDecodedVnvm = json_decode(utf8_encode($items_origin));
  
 $datosClientes = (object)$getDecodedVnvm->articulos;
@@ -306,14 +316,18 @@ $paginaHasta = $datosClientes->totalRegistros;
  
 $registros = $datosClientes->registros;
 $count = 0;
- 
+//var_dump($registros);
 foreach($registros as $registro){
  
-    $ArrayRegistros[$count]=$registro->{'N/Ref'};
-    $count++;
+    //if($registro->publicable != "N"){
+        $ArrayRegistros[$count]= $registro;//$registro->{'N/Ref'};
+        $count++;
+    //}
+ 
  
 }
- 
+//echo "<pre>-----------------------------------------------------------------------</pre>";
+//var_dump($ArrayRegistros);
 return $ArrayRegistros;
 }
 ?>
