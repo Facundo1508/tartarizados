@@ -94,8 +94,8 @@ foreach($ListNrefObj as $registro){
             //ob_flush();
             //flush();
  
-            // $imagenes= array();
-            // $count=0;
+            $imagenes= array();
+            $count=0;
  
             if($registro->publicable != "N"){
  
@@ -104,7 +104,7 @@ foreach($ListNrefObj as $registro){
                     $imagenes[$count] = [                         
                             'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$imgVnvm->visd,
                             'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
-                        ];                                   
+                    ];                                   
  
                     $count++;
                 }

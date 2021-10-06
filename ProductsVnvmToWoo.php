@@ -63,9 +63,6 @@ $getDecodedVnvm = json_decode(utf8_encode($getDecodedVnvm));
 //Este es el Objeto que trae Vnvm, sacamos el Id para mandarlo al insert como sku , y para comparar que no haya otro igual 
 $datosClientes = (object)$getDecodedVnvm->articulos;
 
-echo new Categorias(2);
-print_r($datosClientes);
-die;
 $registros = $datosClientes->registros;
 
 if( $datosClientes->totalRegistros <= 0 ){
@@ -216,16 +213,7 @@ if ($getSku) {
         
         'images' => $images,
         'meta_data' => $meta,
-            
-        'categories' => [
-            [
-                'id' => 9
-            ],
-            [
-                'id' => 14
-            ]
-        ]
-       
+         
     ];
    
     $resultCreate = $woocommerce->post('products',  $data);

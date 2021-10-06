@@ -56,7 +56,6 @@ foreach($ListNrefObj as $idVnvm){
         
         curl_close($ch);
         $items_origin = str_replace(array("\n", "\r"), '', $items_origin);
-
         
         if (!$items_origin) {
 
@@ -66,7 +65,7 @@ foreach($ListNrefObj as $idVnvm){
         }              
 
 	    $getDecodedVnvm = json_decode(utf8_encode($items_origin));
-
+        
         if(is_null($getDecodedVnvm) || empty($getDecodedVnvm)){
 
             echo "➜ no se encontro el articulo ... \n";
