@@ -8,7 +8,9 @@
 </head>
 <body>
 <?php
- 
+
+include 'categorias.php';
+require('categorias.php');
 require __DIR__ . '/vendor/autoload.php';
  
 use Automattic\WooCommerce\Client;
@@ -216,6 +218,19 @@ foreach($ListNrefObj as $registro){
  
             ];
 
+            $familia=(string)$registro->familia->id;
+            
+            $indice = array_search($familia,$categoriasList,true);
+
+            if(!empty($indice) && !is_null($indice) ){
+
+                $categorias = [                   
+                    ['id' => (string)$indice]
+                ];
+
+                $data['categories'] = $categorias;  
+            }
+            
             //dimensiones
             $dimensiones=array();
 
