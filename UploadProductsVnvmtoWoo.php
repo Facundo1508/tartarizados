@@ -7,8 +7,9 @@
     <title>Productos Vnvm a WooCommerce</title>
 </head>
 <body>
-<?php
-
+    <?php
+include 'categorias.php';
+require('categorias.php');
 require __DIR__ . '/vendor/autoload.php';
 
 use Automattic\WooCommerce\Client;
@@ -84,7 +85,7 @@ foreach($ListNrefObj as $idVnvm){
             $count=0;
             foreach($registro->imagenes as $imgVnvm ){
 
-                 $imagenes[$count] = [                         
+                $imagenes[$count] = [                         
                         'src' => (string)'http://81.45.33.23/cgi-vel/vnvm/'.$imgVnvm->visd,
                         'alt' => empty($registro->nombreAlternativo) || is_null($registro->nombreAlternativo)  ? $registro->nombre : $registro->nombreAlternativo
                     ];                                   
@@ -167,7 +168,7 @@ foreach($ListNrefObj as $idVnvm){
                 $sale_price=$precioOfertaSinIVA*$calculoIVA;
             }
             $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
-            
+
             $data = [
 
                 'name'=>$nameProd,
@@ -195,9 +196,21 @@ foreach($ListNrefObj as $idVnvm){
                 'stock_status' => $stock_status,
                 'images' => $imagenes,
                 'meta_data' => $meta
-
             ];
 
+            $familia=(string)$registro->familia->id;
+            
+            $indice = array_search($familia,$categoriasList,true);
+
+            if(!empty($indice) && !is_null($indice) ){
+
+                $categorias = [
+                    'id' => (string)$indice
+                ];
+
+                $data['categories'] = $categorias;  
+            }
+            
             //dimensiones
             $dimensiones=array();
 
@@ -222,6 +235,8 @@ foreach($ListNrefObj as $idVnvm){
                 $peso = (string) $registro->capacidad;//capacidad   
                 $data['weight'] = $peso;    
             }
+           print_r($data);
+           die;
            
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 

@@ -35,7 +35,7 @@ $woocommerce = new Client(
     ]
 );
  
-$paginaDesde=2;
+$paginaDesde=1;
 $paginaHasta=0;
  
 $paginaHasta=ContadorVnvm();
