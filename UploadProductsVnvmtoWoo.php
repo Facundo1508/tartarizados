@@ -205,7 +205,7 @@ foreach($ListNrefObj as $idVnvm){
             if(!empty($indice) && !is_null($indice) ){
 
                 $categorias = [                   
-                    ['id' => (string)$indice]
+                    ['id' => (string)$indice]                 
                 ];
 
                 $data['categories'] = $categorias;  
@@ -235,8 +235,8 @@ foreach($ListNrefObj as $idVnvm){
                 $peso = (string) $registro->capacidad;//capacidad   
                 $data['weight'] = $peso;    
             }
-                //    print_r($data);
-                //    die;   
+            //    print_r($data);
+            //    die;   
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [
