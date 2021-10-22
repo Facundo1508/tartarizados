@@ -128,7 +128,7 @@
         '528'  => 'P1904',// Decoración y Regalo CORRECTO
         '523'  => 'P1905',// Moldes CORRECTO
         '530'  => 'P1906',// Accesorios CORRECTO
-        //'512'  => 'P1908',//san valentin ???? Este no se bien el correcto en las categorias de WOO por que no tienen nombre en la descripcion de san valentin 
+        '523'  => 'P1908',//moldes nuevamente artesanias
         //Ingredientes
         '107'  => 'P02',//colorantes CORRECTO
         '582'  => 'P0205',// en esprite  CORRECTO

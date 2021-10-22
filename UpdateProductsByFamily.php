@@ -40,7 +40,19 @@ $woocommerce = new Client(
     ]
 );
  
-$id = $_POST['familia'];
+if( isset($_POST['familia']) )
+{
+    $id = $_POST['familia'];
+}
+else {
+    if($argc !== 2){
+        echo "Error al introducir parametro de familia, se usara familia pro defecto, P0503";
+        $id = "P0503";
+    }
+    else{
+        $id = $argv[1];
+    }
+}
 //$id = "P0503";
 $ListNrefObj= ListadoActualizar($id);
 $count=0;
