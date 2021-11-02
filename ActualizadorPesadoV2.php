@@ -90,7 +90,6 @@ $woocommerce = new Client(
             echo "➜ no se encontro el articulo ... \n";
             echo $idVnvm;
           
-
         }
 
               
@@ -205,7 +204,6 @@ $woocommerce = new Client(
 
             ];        
          
-
             $sku=$registros->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [

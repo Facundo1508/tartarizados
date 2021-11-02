@@ -137,6 +137,8 @@ foreach($ListNrefObj as $registro){
                 default:
                     $visibilidad_publicable="3";//B2B y B2C
             }; 
+            //producto Nacional
+            $productoNacional=is_null($registro->productoNacional) || empty($registro->productoNacional) ? 0 : 1;
             //um_mayorista
             $precio9=$registro->{'tarifa-9'}->precio;
             $precio2=$registro->{'tarifa-2'}->precio;
@@ -171,6 +173,11 @@ foreach($ListNrefObj as $registro){
  
                 'key'=>'_visibilidad_publicable',
                 'value'=> $visibilidad_publicable
+            ];
+            $meta[3] = [
+
+                'key'=>'_productoNacional',
+                'value'=> $productoNacional
             ];
  
             $nameProd= empty($registro->nombreAlternativo ) || is_null($registro->nombreAlternativo )  ? $registro->nombre: $registro->nombreAlternativo ;

@@ -119,7 +119,8 @@ while($paginaDesde<=$paginaHasta){
                 $visibilidad='search';
             };
  
- 
+            //producto Nacional
+            $productoNacional=is_null($registro->productoNacional) || empty($registro->productoNacional) ? 0 : 1;
             //um_mayorista
             $precio9=$registro->{'tarifa-9'}->precio;
             $precio2=$registro->{'tarifa-2'}->precio;
@@ -156,6 +157,11 @@ while($paginaDesde<=$paginaHasta){
  
                 'key'=>'_visibilidad_publicable',
                 'value'=> $visibilidad_publicable
+            ];
+            $meta[3] = [
+
+                'key'=>'_productoNacional',
+                'value'=> $productoNacional
             ];
             $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
             $nameProd= empty($registro->nombre ) || is_null($registro->nombre )  ? $registro->nombreAlternativo: $registro->nombre ;

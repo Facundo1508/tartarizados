@@ -17,13 +17,13 @@ set_time_limit ( 0 );
 // Conexión WooCommerce API destino
 // ================================
 //PRUEBAS
-// $url_API_woo = 'https://pruebas.tartarizados.com/';
-// $ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
-// $cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
+$url_API_woo = 'https://pruebas.tartarizados.com/';
+$ck_API_woo = 'ck_41fcb94f0f50e0e1e8f67af0b649c387b62a5417';
+$cs_API_woo = 'cs_96648b4e8944fea3016c07a2c7b110965edb1d94';
 //PRODUCCION
-$url_API_woo = 'https://tartarizados.com/';
-$ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
-$cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
+// $url_API_woo = 'https://tartarizados.com/';
+// $ck_API_woo = 'ck_7136b22f816dc374f4955631b762fb33db03ef8b';
+// $cs_API_woo ='cs_c71bded97e67e40719225d5992d6ac4570ce7294';
 
 $woocommerce = new Client(
     $url_API_woo,
@@ -76,7 +76,7 @@ foreach($ListNrefObj as $idVnvm){
         }
 
         $datosClientes = (object)$getDecodedVnvm->articulos;
-       
+           
         $registros = $datosClientes->registros;
         
         foreach($registros as $registro){
@@ -106,6 +106,8 @@ foreach($ListNrefObj as $idVnvm){
                 default:
                     $visibilidad_publicable="3";//B2B y B2C
             }; 
+            //producto Nacional
+            $productoNacional=is_null($registro->productoNacional) || empty($registro->productoNacional) ? 0 : 1;
             //um_mayorista
             $precio9=$registro->{'tarifa-9'}->precio;
             $precio2=$registro->{'tarifa-2'}->precio;
@@ -140,6 +142,11 @@ foreach($ListNrefObj as $idVnvm){
 
                 'key'=>'_visibilidad_publicable',
                 'value'=> $visibilidad_publicable
+            ];
+            $meta[3] = [
+
+                'key'=>'_productoNacional',
+                'value'=> $productoNacional
             ];
 
             $nameProd= empty($registro->nombreAlternativo ) || is_null($registro->nombreAlternativo )  ? $registro->nombre: $registro->nombreAlternativo ;
@@ -235,8 +242,10 @@ foreach($ListNrefObj as $idVnvm){
                 $peso = (string) $registro->capacidad;//capacidad   
                 $data['weight'] = $peso;    
             }
-            //    print_r($data);
-            //    die;   
+
+            // print_r($data);
+            // die;   
+
             $sku=$registro->{'N/Ref'};
             //OBJETO DE PRODUCTOS EN WOOCOMERCE 
             $params = [
