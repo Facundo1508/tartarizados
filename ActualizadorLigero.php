@@ -163,6 +163,25 @@ while($paginaDesde<=$paginaHasta){
                 'key'=>'_productoNacional',
                 'value'=> $productoNacional
             ];
+
+            if($registro->porcentajeIvaVenta==="0"){
+ 
+                $regular_price =$registro->{'tarifa-9'}->precio;
+                $sale_price=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+ 
+            }else{
+                $valorIva = '1.'.$registro->porcentajeIvaVenta;
+ 
+                $calculoIVA=doubleval($valorIva);
+ 
+                //selprice se llenara con la tarifa 8 de existir si no es asi sigue usando la 9
+                $precioOfertaSinIVA=$registro->{'tarifa-8'}->precio <= 0 ? $registro->{'tarifa-9'}->precio: $registro->{'tarifa-8'}->precio;
+                $precioSinIVA =$registro->{'tarifa-9'}->precio;
+ 
+                $regular_price=$precioSinIVA*$calculoIVA;
+                $sale_price=$precioOfertaSinIVA*$calculoIVA;
+            }
+
             $stock_status=round($registro->existencias->existencias)>=1 ? 'instock' : 'outofstock';
             $nameProd= empty($registro->nombre ) || is_null($registro->nombre )  ? $registro->nombreAlternativo: $registro->nombre ;
  
@@ -176,7 +195,7 @@ while($paginaDesde<=$paginaHasta){
  
                 'name' => $nameProd ,
                 'catalog_visibility'=>'visible',
-                'regular_price' => (string)$price,
+                'regular_price'=>(string)$regular_price,
                 'sale_price'=>(string)$sale_price,
                 'short_description' =>'<div class="concepto_prod">
                 <div class="span_concepto">'.$concepto.'</div>
